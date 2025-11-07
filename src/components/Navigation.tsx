@@ -11,6 +11,8 @@ const Navigation = () => {
     { to: "/", label: "Home" },
     { to: "/destinations", label: "Destinations" },
     { to: "/maps", label: "Maps" },
+    { to: "/gallery", label: "Gallery" },
+    { to: "/blog", label: "Blog" },
     { to: "/currency", label: "Currency" },
     { to: "/chat", label: "Travel Buddy" },
     { to: "/bookings", label: "Bookings" },

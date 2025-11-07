@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, MessageCircle, Phone, Landmark, Plane, Shield } from "lucide-react";
 import InteractiveBackground from "@/components/InteractiveBackground";
+import WeatherWidget from "@/components/WeatherWidget";
 
 const Home = () => {
   const features = [
@@ -93,6 +94,12 @@ const Home = () => {
       <section className="py-20">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center mb-12">How We Help You</h2>
+          
+          {/* Weather Widget */}
+          <div className="max-w-md mx-auto mb-12">
+            <WeatherWidget />
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {features.map((feature, index) => (
               <Link key={index} to={feature.link}>

@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Send, Bot, User } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface Message {
   role: "user" | "assistant";
@@ -20,52 +21,114 @@ const Chat = () => {
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const getResponse = (query: string): string => {
-    const lowerQuery = query.toLowerCase();
+  const streamChat = async (userMessages: Message[]) => {
+    const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
+    
+    try {
+      const resp = await fetch(CHAT_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ messages: userMessages }),
+      });
 
-    // Food & Restaurants
-    if (lowerQuery.includes("food") || lowerQuery.includes("restaurant") || lowerQuery.includes("eat")) {
-      if (lowerQuery.includes("delhi")) {
-        return "🍽️ **Best Restaurants in Delhi:**\n\n**Fine Dining:** Indian Accent, Bukhara, Dum Pukht\n**Mid-Range:** Karim's, Saravana Bhavan, Moti Mahal\n**Street Food:** Chandni Chowk, Connaught Place\n**Must-Try:** Butter Chicken, Chole Bhature, Paranthe";
+      if (!resp.ok || !resp.body) {
+        if (resp.status === 429) {
+          toast({
+            title: "Rate limit exceeded",
+            description: "Please try again in a moment.",
+            variant: "destructive",
+          });
+        } else if (resp.status === 402) {
+          toast({
+            title: "Service unavailable",
+            description: "Please try again later.",
+            variant: "destructive",
+          });
+        }
+        throw new Error("Failed to start stream");
       }
-      return "🍽️ Ask me about specific cities like Delhi, Mumbai, Goa for restaurant recommendations!";
+
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      let textBuffer = "";
+      let streamDone = false;
+      let assistantContent = "";
+
+      // Add empty assistant message that we'll update
+      setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
+
+      while (!streamDone) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        textBuffer += decoder.decode(value, { stream: true });
+
+        let newlineIndex: number;
+        while ((newlineIndex = textBuffer.indexOf("\n")) !== -1) {
+          let line = textBuffer.slice(0, newlineIndex);
+          textBuffer = textBuffer.slice(newlineIndex + 1);
+
+          if (line.endsWith("\r")) line = line.slice(0, -1);
+          if (line.startsWith(":") || line.trim() === "") continue;
+          if (!line.startsWith("data: ")) continue;
+
+          const jsonStr = line.slice(6).trim();
+          if (jsonStr === "[DONE]") {
+            streamDone = true;
+            break;
+          }
+
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content as string | undefined;
+            if (content) {
+              assistantContent += content;
+              setMessages((prev) => {
+                const newMessages = [...prev];
+                newMessages[newMessages.length - 1] = {
+                  role: "assistant",
+                  content: assistantContent,
+                };
+                return newMessages;
+              });
+            }
+          } catch {
+            textBuffer = line + "\n" + textBuffer;
+            break;
+          }
+        }
+      }
+
+      setIsTyping(false);
+    } catch (error) {
+      console.error("Chat error:", error);
+      setMessages((prev) => prev.slice(0, -1));
+      toast({
+        title: "Error",
+        description: "Failed to get response. Please try again.",
+        variant: "destructive",
+      });
+      setIsTyping(false);
     }
-
-    // Hotels
-    if (lowerQuery.includes("hotel") || lowerQuery.includes("stay")) {
-      return "🏨 **Hotel Guide:** Tell me which city you need hotels for - Delhi, Mumbai, Goa, Jaipur, etc. and I'll give you specific recommendations with prices!";
-    }
-
-    // Cities
-    if (lowerQuery.includes("delhi")) return "🏛️ **Delhi:** Red Fort, Qutub Minar, India Gate, Lotus Temple. Best time: Oct-March. Top restaurants: Karim's, Indian Accent.";
-    if (lowerQuery.includes("mumbai")) return "🌊 **Mumbai:** Gateway of India, Marine Drive, Elephanta Caves. Must-try: Vada Pav, Pav Bhaji.";
-    if (lowerQuery.includes("goa")) return "🏖️ **Goa:** North Goa for parties (Baga, Calangute), South Goa for peace (Palolem). Best: Nov-Feb.";
-    if (lowerQuery.includes("jaipur")) return "👑 **Jaipur:** Hawa Mahal, Amber Fort, City Palace. Shopping: Johari Bazaar. Try: Dal Baati Churma.";
-
-    // Emergency
-    if (lowerQuery.includes("emergency")) return "🚨 **Emergency:** Police: 100, Ambulance: 102, Fire: 101, Tourist Helpline: 1800-111-363";
-
-    // Default
-    return "I can help with: 🍽️ Food & Restaurants • 🏨 Hotels • 📍 City Guides • ✈️ Transportation • 🛡️ Safety • 🎭 Culture • 💰 Money Tips\n\nAsk me anything specific!";
   };
 
   const sendMessage = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() || isTyping) return;
+    
     const userMessage: Message = { role: "user", content: input };
-    setMessages((prev) => [...prev, userMessage]);
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
     setInput("");
     setIsTyping(true);
 
-    setTimeout(() => {
-      const response = getResponse(input);
-      setMessages((prev) => [...prev, { role: "assistant", content: response }]);
-      setIsTyping(false);
-    }, 800);
+    await streamChat(updatedMessages);
   };
 
   return (

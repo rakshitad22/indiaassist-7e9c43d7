@@ -42,8 +42,8 @@ const Contact = () => {
     // Simulate submission delay
     setTimeout(() => {
       toast({
-        title: "Thank you for contacting India Assist! ✅",
-        description: "We've received your message and will get back to you soon.",
+        title: "Thank you for contacting IndiaAssist! ✅",
+        description: "We'll reach out soon.",
       });
 
       setFormData({
@@ -64,6 +64,18 @@ const Contact = () => {
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
           </p>
+          <div className="mt-6 text-center">
+            <h2 className="text-lg font-semibold mb-2">Project Team</h2>
+            <div className="flex flex-wrap justify-center gap-3 mb-2">
+              <span className="px-4 py-2 bg-primary/10 rounded-lg font-medium">Rakshita D</span>
+              <span className="px-4 py-2 bg-primary/10 rounded-lg font-medium">Bala Mahesh</span>
+              <span className="px-4 py-2 bg-primary/10 rounded-lg font-medium">Akshatha B G</span>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Department of Information Science and Engineering<br />
+              Sri Krishna Institute of Technology, Bengaluru
+            </p>
+          </div>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
@@ -127,7 +139,7 @@ const Contact = () => {
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full gradient-hero text-white"
+                    className="w-full gradient-saffron text-white"
                     size="lg"
                   >
                     {isSubmitting ? "Sending..." : "Send Message"}

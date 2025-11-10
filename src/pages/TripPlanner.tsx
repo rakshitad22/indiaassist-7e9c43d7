@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Calendar, MapPin, Plus, Trash2, Save } from "lucide-react";
+import { Calendar, MapPin, Plus, Trash2, Save, CheckCircle2, IndianRupee } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import InteractiveBackground from "@/components/InteractiveBackground";
 
@@ -21,12 +21,42 @@ interface Destination {
   activities: Activity[];
 }
 
+interface BudgetEstimate {
+  accommodation: number;
+  transport: number;
+  food: number;
+  activities: number;
+  total: number;
+}
+
+const accommodationTypes = {
+  budget: { name: "Budget (₹1,000-2,000/night)", cost: 1500 },
+  standard: { name: "Standard (₹2,000-5,000/night)", cost: 3500 },
+  luxury: { name: "Luxury (₹5,000+/night)", cost: 8000 },
+};
+
 const TripPlanner = () => {
   const { toast } = useToast();
   const [tripName, setTripName] = useState("");
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const [newDestName, setNewDestName] = useState("");
   const [newDestDate, setNewDestDate] = useState("");
+  const [numberOfDays, setNumberOfDays] = useState("3");
+  const [numberOfPeople, setNumberOfPeople] = useState("2");
+  const [accommodationType, setAccommodationType] = useState<keyof typeof accommodationTypes>("standard");
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  const calculateBudget = (): BudgetEstimate => {
+    const days = parseInt(numberOfDays) || 1;
+    const people = parseInt(numberOfPeople) || 1;
+    const accommodation = accommodationTypes[accommodationType].cost * days;
+    const transport = 1500 * days * people; // Average transport per day per person
+    const food = 1000 * days * people; // Average food per day per person
+    const activities = 2000 * days * people; // Average activities per day per person
+    const total = accommodation + transport + food + activities;
+    
+    return { accommodation, transport, food, activities, total };
+  };
 
   const addDestination = () => {
     if (!newDestName || !newDestDate) {
@@ -103,19 +133,30 @@ const TripPlanner = () => {
       return;
     }
 
-    // Save to localStorage for now
     const tripPlan = {
       name: tripName,
       destinations,
+      numberOfDays,
+      numberOfPeople,
+      accommodationType,
+      budget: calculateBudget(),
       createdAt: new Date().toISOString(),
     };
-    localStorage.setItem("tripPlan", JSON.stringify(tripPlan));
+    
+    const savedTrips = JSON.parse(localStorage.getItem("tripPlans") || "[]");
+    savedTrips.push(tripPlan);
+    localStorage.setItem("tripPlans", JSON.stringify(savedTrips));
+
+    setShowSuccess(true);
+    setTimeout(() => setShowSuccess(false), 3000);
 
     toast({
-      title: "Trip Saved!",
-      description: "Your trip itinerary has been saved successfully",
+      title: "Trip Saved Successfully! ✅",
+      description: "Your trip itinerary has been saved to local storage",
     });
   };
+
+  const budget = calculateBudget();
 
   return (
     <div className="min-h-screen relative">
@@ -127,24 +168,123 @@ const TripPlanner = () => {
               Trip Planner
             </h1>
             <p className="text-muted-foreground text-lg">
-              Create your perfect Indian adventure
+              Create your perfect Indian adventure with budget estimates
             </p>
           </div>
 
-          {/* Trip Name */}
+          {/* Success Animation */}
+          {showSuccess && (
+            <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 animate-scale-in">
+              <Card className="shadow-2xl border-2 border-green-500">
+                <CardContent className="p-8 text-center">
+                  <CheckCircle2 className="h-20 w-20 text-green-500 mx-auto mb-4 animate-pulse" />
+                  <h2 className="text-2xl font-bold text-green-600 dark:text-green-400 mb-2">
+                    Trip Saved Successfully!
+                  </h2>
+                  <p className="text-muted-foreground">Your itinerary is ready for your adventure</p>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Trip Details */}
           <Card className="mb-6 shadow-card">
             <CardHeader>
               <CardTitle>Trip Details</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="tripName">Trip Name</Label>
+                <Label htmlFor="tripName">Trip Name *</Label>
                 <Input
                   id="tripName"
                   placeholder="e.g., Golden Triangle Tour"
                   value={tripName}
                   onChange={(e) => setTripName(e.target.value)}
                 />
+              </div>
+              <div className="grid md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="days">Number of Days</Label>
+                  <Select value={numberOfDays} onValueChange={setNumberOfDays}>
+                    <SelectTrigger id="days">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {[1, 2, 3, 4, 5, 6, 7, 10, 14].map((num) => (
+                        <SelectItem key={num} value={num.toString()}>
+                          {num} {num === 1 ? "Day" : "Days"}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="people">Number of People</Label>
+                  <Select value={numberOfPeople} onValueChange={setNumberOfPeople}>
+                    <SelectTrigger id="people">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {[1, 2, 3, 4, 5, 6, 8, 10].map((num) => (
+                        <SelectItem key={num} value={num.toString()}>
+                          {num} {num === 1 ? "Person" : "People"}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="accommodation">Accommodation Type</Label>
+                  <Select value={accommodationType} onValueChange={(value: any) => setAccommodationType(value)}>
+                    <SelectTrigger id="accommodation">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(accommodationTypes).map(([key, value]) => (
+                        <SelectItem key={key} value={key}>
+                          {value.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Budget Estimate */}
+          <Card className="mb-6 shadow-card gradient-hero text-white">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <IndianRupee className="h-5 w-5" />
+                Estimated Budget Breakdown
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center pb-2 border-b border-white/20">
+                  <span className="text-sm opacity-90">Accommodation ({numberOfDays} days):</span>
+                  <span className="font-semibold">₹{budget.accommodation.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between items-center pb-2 border-b border-white/20">
+                  <span className="text-sm opacity-90">Transport ({numberOfPeople} people):</span>
+                  <span className="font-semibold">₹{budget.transport.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between items-center pb-2 border-b border-white/20">
+                  <span className="text-sm opacity-90">Food & Dining:</span>
+                  <span className="font-semibold">₹{budget.food.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between items-center pb-2 border-b border-white/20">
+                  <span className="text-sm opacity-90">Activities & Entertainment:</span>
+                  <span className="font-semibold">₹{budget.activities.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between items-center pt-3 border-t-2 border-white/40">
+                  <span className="text-lg font-bold">Total Estimated Cost:</span>
+                  <span className="text-2xl font-bold">₹{budget.total.toLocaleString()}</span>
+                </div>
+                <p className="text-xs opacity-75 text-center mt-3">
+                  * Estimates are approximate and may vary based on actual choices
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -206,9 +346,9 @@ const TripPlanner = () => {
               <Button
                 onClick={saveTripPlan}
                 size="lg"
-                className="gradient-hero text-white"
+                className="gradient-saffron text-white px-12 py-6 text-lg"
               >
-                <Save className="h-5 w-5 mr-2" />
+                <Save className="h-6 w-6 mr-2" />
                 Save Trip Plan
               </Button>
             </div>
@@ -244,7 +384,7 @@ const DestinationCard = ({
   };
 
   return (
-    <Card className="shadow-card">
+    <Card className="shadow-card hover:shadow-lg transition-shadow">
       <CardHeader>
         <div className="flex items-start justify-between">
           <div>
@@ -278,7 +418,7 @@ const DestinationCard = ({
             {destination.activities.map((activity) => (
               <div
                 key={activity.id}
-                className="flex items-center justify-between p-3 bg-muted rounded-lg"
+                className="flex items-center justify-between p-3 bg-muted rounded-lg hover:bg-muted/70 transition-colors"
               >
                 <div>
                   <p className="font-medium">{activity.name}</p>

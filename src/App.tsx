@@ -8,7 +8,6 @@ import { LanguageProvider } from "./components/LanguageTranslator";
 import Home from "./pages/Home";
 import Destinations from "./pages/Destinations";
 import Maps from "./pages/Maps";
-import Gallery from "./pages/Gallery";
 import Blog from "./pages/Blog";
 import TripPlanner from "./pages/TripPlanner";
 import Currency from "./pages/Currency";
@@ -36,7 +35,6 @@ const App = () => (
                 <Route path="/" element={<Home />} />
                 <Route path="/destinations" element={<Destinations />} />
                 <Route path="/maps" element={<Maps />} />
-                <Route path="/gallery" element={<Gallery />} />
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/trip-planner" element={<TripPlanner />} />
                 <Route path="/currency" element={<Currency />} />

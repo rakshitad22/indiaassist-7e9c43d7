@@ -12,7 +12,6 @@ const Navigation = () => {
     { to: "/", label: "Home" },
     { to: "/destinations", label: "Destinations" },
     { to: "/maps", label: "Maps" },
-    { to: "/gallery", label: "Gallery" },
     { to: "/blog", label: "Blog" },
     { to: "/trip-planner", label: "Trip Planner" },
     { to: "/currency", label: "Currency" },

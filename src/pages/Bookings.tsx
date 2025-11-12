@@ -4,8 +4,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calendar, Car, Hotel, Users, Plane, CheckCircle, Download, Printer } from "lucide-react";
+import { Calendar, Car, Hotel, Users, Plane, CheckCircle, Download, Printer, Wifi, Waves, Dumbbell, Sparkles, Utensils, Star, Image as ImageIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -37,139 +39,767 @@ interface Booking {
   timestamp: string;
 }
 
-const hotelOptions = {
+interface HotelData {
+  name: string;
+  stars: number;
+  basePrice: number;
+  amenities: string[];
+  images: string[];
+}
+
+const hotelOptions: Record<string, HotelData[]> = {
   "Delhi": [
-    { name: "The Imperial", stars: 5, basePrice: 16000 },
-    { name: "The Leela Palace", stars: 5, basePrice: 20000 },
-    { name: "Taj Palace", stars: 5, basePrice: 14000 },
-    { name: "ITC Maurya", stars: 5, basePrice: 15000 },
-    { name: "Hyatt Regency Delhi", stars: 4, basePrice: 9000 },
-    { name: "Radisson Blu Plaza", stars: 4, basePrice: 7500 },
-    { name: "The LaLiT New Delhi", stars: 4, basePrice: 8000 },
-    { name: "Hotel Janpath", stars: 3, basePrice: 4000 },
+    { 
+      name: "The Imperial", 
+      stars: 5, 
+      basePrice: 16000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "The Leela Palace", 
+      stars: 5, 
+      basePrice: 20000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Taj Palace", 
+      stars: 5, 
+      basePrice: 14000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "ITC Maurya", 
+      stars: 5, 
+      basePrice: 15000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Hyatt Regency Delhi", 
+      stars: 4, 
+      basePrice: 9000,
+      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Radisson Blu Plaza", 
+      stars: 4, 
+      basePrice: 7500,
+      amenities: ["WiFi", "Gym", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "The LaLiT New Delhi", 
+      stars: 4, 
+      basePrice: 8000,
+      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Hotel Janpath", 
+      stars: 3, 
+      basePrice: 4000,
+      amenities: ["WiFi", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
   ],
   "Mumbai": [
-    { name: "Taj Mahal Palace", stars: 5, basePrice: 15000 },
-    { name: "The Oberoi Mumbai", stars: 5, basePrice: 18000 },
-    { name: "ITC Maratha", stars: 5, basePrice: 12000 },
-    { name: "JW Marriott Mumbai", stars: 5, basePrice: 14500 },
-    { name: "Trident Nariman Point", stars: 4, basePrice: 8500 },
-    { name: "Hotel Marine Plaza", stars: 4, basePrice: 7000 },
-    { name: "Fariyas Hotel", stars: 3, basePrice: 5000 },
-    { name: "Residency Hotel", stars: 3, basePrice: 4500 },
+    { 
+      name: "Taj Mahal Palace", 
+      stars: 5, 
+      basePrice: 15000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "The Oberoi Mumbai", 
+      stars: 5, 
+      basePrice: 18000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "ITC Maratha", 
+      stars: 5, 
+      basePrice: 12000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "JW Marriott Mumbai", 
+      stars: 5, 
+      basePrice: 14500,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Trident Nariman Point", 
+      stars: 4, 
+      basePrice: 8500,
+      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Hotel Marine Plaza", 
+      stars: 4, 
+      basePrice: 7000,
+      amenities: ["WiFi", "Gym", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Fariyas Hotel", 
+      stars: 3, 
+      basePrice: 5000,
+      amenities: ["WiFi", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Residency Hotel", 
+      stars: 3, 
+      basePrice: 4500,
+      amenities: ["WiFi", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
   ],
   "Bangalore": [
-    { name: "The Oberoi", stars: 5, basePrice: 13000 },
-    { name: "ITC Gardenia", stars: 5, basePrice: 11000 },
-    { name: "Taj West End", stars: 5, basePrice: 12000 },
-    { name: "JW Marriott Bengaluru", stars: 5, basePrice: 13500 },
-    { name: "The Ritz-Carlton", stars: 5, basePrice: 14000 },
-    { name: "Shangri-La Bengaluru", stars: 4, basePrice: 8500 },
-    { name: "The Park Bangalore", stars: 4, basePrice: 7000 },
-    { name: "Royal Orchid Central", stars: 3, basePrice: 5000 },
+    { 
+      name: "The Oberoi", 
+      stars: 5, 
+      basePrice: 13000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "ITC Gardenia", 
+      stars: 5, 
+      basePrice: 11000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Taj West End", 
+      stars: 5, 
+      basePrice: 12000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "JW Marriott Bengaluru", 
+      stars: 5, 
+      basePrice: 13500,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "The Ritz-Carlton", 
+      stars: 5, 
+      basePrice: 14000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Shangri-La Bengaluru", 
+      stars: 4, 
+      basePrice: 8500,
+      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "The Park Bangalore", 
+      stars: 4, 
+      basePrice: 7000,
+      amenities: ["WiFi", "Gym", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Royal Orchid Central", 
+      stars: 3, 
+      basePrice: 5000,
+      amenities: ["WiFi", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
   ],
   "Goa": [
-    { name: "Taj Exotica", stars: 5, basePrice: 14000 },
-    { name: "The Leela Goa", stars: 5, basePrice: 16000 },
-    { name: "Grand Hyatt", stars: 5, basePrice: 13000 },
-    { name: "ITC Grand Goa", stars: 5, basePrice: 12500 },
-    { name: "Park Hyatt Goa", stars: 5, basePrice: 15000 },
-    { name: "Alila Diwa Goa", stars: 4, basePrice: 9000 },
-    { name: "Radisson Blu Resort", stars: 4, basePrice: 7500 },
-    { name: "Goa Marriott Resort", stars: 4, basePrice: 8000 },
-    { name: "Lemon Tree Amarante", stars: 3, basePrice: 5500 },
+    { 
+      name: "Taj Exotica", 
+      stars: 5, 
+      basePrice: 14000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "The Leela Goa", 
+      stars: 5, 
+      basePrice: 16000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Grand Hyatt", 
+      stars: 5, 
+      basePrice: 13000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "ITC Grand Goa", 
+      stars: 5, 
+      basePrice: 12500,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Park Hyatt Goa", 
+      stars: 5, 
+      basePrice: 15000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Alila Diwa Goa", 
+      stars: 4, 
+      basePrice: 9000,
+      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Radisson Blu Resort", 
+      stars: 4, 
+      basePrice: 7500,
+      amenities: ["WiFi", "Pool", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Goa Marriott Resort", 
+      stars: 4, 
+      basePrice: 8000,
+      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Lemon Tree Amarante", 
+      stars: 3, 
+      basePrice: 5500,
+      amenities: ["WiFi", "Pool", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
   ],
   "Jaipur": [
-    { name: "Rambagh Palace", stars: 5, basePrice: 20000 },
-    { name: "Oberoi Rajvilas", stars: 5, basePrice: 16000 },
-    { name: "Taj Jai Mahal Palace", stars: 5, basePrice: 15000 },
-    { name: "ITC Rajputana", stars: 5, basePrice: 12000 },
-    { name: "Hilton Jaipur", stars: 4, basePrice: 7500 },
-    { name: "Radisson Blu Jaipur", stars: 4, basePrice: 7000 },
-    { name: "Park Prime", stars: 3, basePrice: 4500 },
-    { name: "Hotel Arya Niwas", stars: 3, basePrice: 3500 },
+    { 
+      name: "Rambagh Palace", 
+      stars: 5, 
+      basePrice: 20000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Oberoi Rajvilas", 
+      stars: 5, 
+      basePrice: 16000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Taj Jai Mahal Palace", 
+      stars: 5, 
+      basePrice: 15000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "ITC Rajputana", 
+      stars: 5, 
+      basePrice: 12000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Hilton Jaipur", 
+      stars: 4, 
+      basePrice: 7500,
+      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Radisson Blu Jaipur", 
+      stars: 4, 
+      basePrice: 7000,
+      amenities: ["WiFi", "Gym", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Park Prime", 
+      stars: 3, 
+      basePrice: 4500,
+      amenities: ["WiFi", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Hotel Arya Niwas", 
+      stars: 3, 
+      basePrice: 3500,
+      amenities: ["WiFi", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
   ],
   "Agra": [
-    { name: "The Oberoi Amarvilas", stars: 5, basePrice: 25000 },
-    { name: "ITC Mughal", stars: 5, basePrice: 12000 },
-    { name: "Taj Hotel & Convention Centre", stars: 5, basePrice: 14000 },
-    { name: "Courtyard by Marriott", stars: 4, basePrice: 8500 },
-    { name: "Radisson Blu Agra", stars: 4, basePrice: 7500 },
-    { name: "Howard Plaza", stars: 3, basePrice: 4000 },
-    { name: "Hotel Clarks Shiraz", stars: 3, basePrice: 5000 },
+    { 
+      name: "The Oberoi Amarvilas", 
+      stars: 5, 
+      basePrice: 25000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "ITC Mughal", 
+      stars: 5, 
+      basePrice: 12000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Taj Hotel & Convention Centre", 
+      stars: 5, 
+      basePrice: 14000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Courtyard by Marriott", 
+      stars: 4, 
+      basePrice: 8500,
+      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Radisson Blu Agra", 
+      stars: 4, 
+      basePrice: 7500,
+      amenities: ["WiFi", "Gym", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Howard Plaza", 
+      stars: 3, 
+      basePrice: 4000,
+      amenities: ["WiFi", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Hotel Clarks Shiraz", 
+      stars: 3, 
+      basePrice: 5000,
+      amenities: ["WiFi", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
   ],
   "Hyderabad": [
-    { name: "Taj Falaknuma Palace", stars: 5, basePrice: 22000 },
-    { name: "ITC Kohenur", stars: 5, basePrice: 13000 },
-    { name: "Taj Krishna", stars: 5, basePrice: 11000 },
-    { name: "Novotel Hyderabad", stars: 4, basePrice: 7500 },
-    { name: "Marriott Hyderabad", stars: 4, basePrice: 8500 },
-    { name: "Lemon Tree Hotel", stars: 3, basePrice: 4500 },
+    { 
+      name: "Taj Falaknuma Palace", 
+      stars: 5, 
+      basePrice: 22000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "ITC Kohenur", 
+      stars: 5, 
+      basePrice: 13000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Taj Krishna", 
+      stars: 5, 
+      basePrice: 11000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Novotel Hyderabad", 
+      stars: 4, 
+      basePrice: 7500,
+      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Marriott Hyderabad", 
+      stars: 4, 
+      basePrice: 8500,
+      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Lemon Tree Hotel", 
+      stars: 3, 
+      basePrice: 4500,
+      amenities: ["WiFi", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
   ],
   "Chennai": [
-    { name: "ITC Grand Chola", stars: 5, basePrice: 14000 },
-    { name: "Taj Coromandel", stars: 5, basePrice: 12000 },
-    { name: "The Leela Palace", stars: 5, basePrice: 15000 },
-    { name: "Hyatt Regency Chennai", stars: 4, basePrice: 8000 },
-    { name: "Radisson Blu Chennai", stars: 4, basePrice: 7000 },
-    { name: "Park Plaza Chennai", stars: 3, basePrice: 5000 },
+    { 
+      name: "ITC Grand Chola", 
+      stars: 5, 
+      basePrice: 14000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Taj Coromandel", 
+      stars: 5, 
+      basePrice: 12000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "The Leela Palace", 
+      stars: 5, 
+      basePrice: 15000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Hyatt Regency Chennai", 
+      stars: 4, 
+      basePrice: 8000,
+      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Radisson Blu Chennai", 
+      stars: 4, 
+      basePrice: 7000,
+      amenities: ["WiFi", "Gym", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Park Plaza Chennai", 
+      stars: 3, 
+      basePrice: 5000,
+      amenities: ["WiFi", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
   ],
   "Kolkata": [
-    { name: "The Oberoi Grand", stars: 5, basePrice: 13000 },
-    { name: "ITC Sonar", stars: 5, basePrice: 11000 },
-    { name: "Taj Bengal", stars: 5, basePrice: 12000 },
-    { name: "Hyatt Regency Kolkata", stars: 4, basePrice: 7500 },
-    { name: "The Park Kolkata", stars: 4, basePrice: 7000 },
-    { name: "Hotel Hindustan International", stars: 3, basePrice: 4500 },
+    { 
+      name: "The Oberoi Grand", 
+      stars: 5, 
+      basePrice: 13000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "ITC Sonar", 
+      stars: 5, 
+      basePrice: 11000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Taj Bengal", 
+      stars: 5, 
+      basePrice: 12000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Hyatt Regency Kolkata", 
+      stars: 4, 
+      basePrice: 7500,
+      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "The Park Kolkata", 
+      stars: 4, 
+      basePrice: 7000,
+      amenities: ["WiFi", "Gym", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Hotel Hindustan International", 
+      stars: 3, 
+      basePrice: 4500,
+      amenities: ["WiFi", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
   ],
   "Pune": [
-    { name: "JW Marriott Pune", stars: 5, basePrice: 12000 },
-    { name: "The Westin Pune", stars: 5, basePrice: 11000 },
-    { name: "Conrad Pune", stars: 5, basePrice: 13000 },
-    { name: "Hyatt Regency Pune", stars: 4, basePrice: 8000 },
-    { name: "Radisson Blu Pune", stars: 4, basePrice: 7000 },
-    { name: "Hotel Sunderban", stars: 3, basePrice: 4000 },
+    { 
+      name: "JW Marriott Pune", 
+      stars: 5, 
+      basePrice: 12000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "The Westin Pune", 
+      stars: 5, 
+      basePrice: 11000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Conrad Pune", 
+      stars: 5, 
+      basePrice: 13000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Hyatt Regency Pune", 
+      stars: 4, 
+      basePrice: 8000,
+      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Radisson Blu Pune", 
+      stars: 4, 
+      basePrice: 7000,
+      amenities: ["WiFi", "Gym", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Hotel Sunderban", 
+      stars: 3, 
+      basePrice: 4000,
+      amenities: ["WiFi", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
   ],
   "Udaipur": [
-    { name: "Taj Lake Palace", stars: 5, basePrice: 24000 },
-    { name: "The Oberoi Udaivilas", stars: 5, basePrice: 26000 },
-    { name: "Taj Fateh Prakash Palace", stars: 5, basePrice: 18000 },
-    { name: "Trident Udaipur", stars: 4, basePrice: 9000 },
-    { name: "Radisson Blu Udaipur", stars: 4, basePrice: 8000 },
-    { name: "Hotel Lakend", stars: 3, basePrice: 5000 },
+    { 
+      name: "Taj Lake Palace", 
+      stars: 5, 
+      basePrice: 24000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "The Oberoi Udaivilas", 
+      stars: 5, 
+      basePrice: 26000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Taj Fateh Prakash Palace", 
+      stars: 5, 
+      basePrice: 18000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Trident Udaipur", 
+      stars: 4, 
+      basePrice: 9000,
+      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Radisson Blu Udaipur", 
+      stars: 4, 
+      basePrice: 8000,
+      amenities: ["WiFi", "Gym", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Hotel Lakend", 
+      stars: 3, 
+      basePrice: 5000,
+      amenities: ["WiFi", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
   ],
   "Kochi": [
-    { name: "Taj Malabar Resort & Spa", stars: 5, basePrice: 12000 },
-    { name: "Crowne Plaza Kochi", stars: 5, basePrice: 10000 },
-    { name: "Grand Hyatt Kochi", stars: 5, basePrice: 13000 },
-    { name: "Le Meridien Kochi", stars: 4, basePrice: 8500 },
-    { name: "Radisson Blu Kochi", stars: 4, basePrice: 7500 },
-    { name: "Hotel Abad Plaza", stars: 3, basePrice: 4500 },
+    { 
+      name: "Taj Malabar Resort & Spa", 
+      stars: 5, 
+      basePrice: 12000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Crowne Plaza Kochi", 
+      stars: 5, 
+      basePrice: 10000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Grand Hyatt Kochi", 
+      stars: 5, 
+      basePrice: 13000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Le Meridien Kochi", 
+      stars: 4, 
+      basePrice: 8500,
+      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Radisson Blu Kochi", 
+      stars: 4, 
+      basePrice: 7500,
+      amenities: ["WiFi", "Gym", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Hotel Abad Plaza", 
+      stars: 3, 
+      basePrice: 4500,
+      amenities: ["WiFi", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
   ],
   "Amritsar": [
-    { name: "Taj Swarna", stars: 5, basePrice: 10000 },
-    { name: "Hyatt Regency Amritsar", stars: 5, basePrice: 11000 },
-    { name: "Radisson Blu Amritsar", stars: 4, basePrice: 7000 },
-    { name: "Holiday Inn Amritsar", stars: 4, basePrice: 6500 },
-    { name: "Hotel Sawera Grand", stars: 3, basePrice: 4000 },
-    { name: "Hotel CJ International", stars: 3, basePrice: 3500 },
+    { 
+      name: "Taj Swarna", 
+      stars: 5, 
+      basePrice: 10000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Hyatt Regency Amritsar", 
+      stars: 5, 
+      basePrice: 11000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Radisson Blu Amritsar", 
+      stars: 4, 
+      basePrice: 7000,
+      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Holiday Inn Amritsar", 
+      stars: 4, 
+      basePrice: 6500,
+      amenities: ["WiFi", "Gym", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Hotel Sawera Grand", 
+      stars: 3, 
+      basePrice: 4000,
+      amenities: ["WiFi", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Hotel CJ International", 
+      stars: 3, 
+      basePrice: 3500,
+      amenities: ["WiFi"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
   ],
   "Varanasi": [
-    { name: "Taj Ganges", stars: 5, basePrice: 10000 },
-    { name: "Radisson Hotel Varanasi", stars: 5, basePrice: 9000 },
-    { name: "Hotel Surya", stars: 4, basePrice: 6500 },
-    { name: "Rivatas by Ideal", stars: 4, basePrice: 7000 },
-    { name: "Hotel Meraden Grand", stars: 3, basePrice: 4500 },
-    { name: "Hotel Ganges View", stars: 3, basePrice: 4000 },
+    { 
+      name: "Taj Ganges", 
+      stars: 5, 
+      basePrice: 10000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Radisson Hotel Varanasi", 
+      stars: 5, 
+      basePrice: 9000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Hotel Surya", 
+      stars: 4, 
+      basePrice: 6500,
+      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Rivatas by Ideal", 
+      stars: 4, 
+      basePrice: 7000,
+      amenities: ["WiFi", "Gym", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Hotel Meraden Grand", 
+      stars: 3, 
+      basePrice: 4500,
+      amenities: ["WiFi", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Hotel Ganges View", 
+      stars: 3, 
+      basePrice: 4000,
+      amenities: ["WiFi", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
   ],
   "Mysore": [
-    { name: "Lalitha Mahal Palace", stars: 5, basePrice: 12000 },
-    { name: "The Windflower Resort", stars: 5, basePrice: 10000 },
-    { name: "Radisson Blu Mysore", stars: 4, basePrice: 7500 },
-    { name: "Royal Orchid Metropole", stars: 4, basePrice: 7000 },
-    { name: "Hotel Sandesh The Prince", stars: 3, basePrice: 4500 },
-    { name: "Hotel Pai Vista", stars: 3, basePrice: 4000 },
+    { 
+      name: "Lalitha Mahal Palace", 
+      stars: 5, 
+      basePrice: 12000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "The Windflower Resort", 
+      stars: 5, 
+      basePrice: 10000,
+      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Radisson Blu Mysore", 
+      stars: 4, 
+      basePrice: 7500,
+      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Royal Orchid Metropole", 
+      stars: 4, 
+      basePrice: 7000,
+      amenities: ["WiFi", "Gym", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Hotel Sandesh The Prince", 
+      stars: 3, 
+      basePrice: 4500,
+      amenities: ["WiFi", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
+    { 
+      name: "Hotel Pai Vista", 
+      stars: 3, 
+      basePrice: 4000,
+      amenities: ["WiFi", "Restaurant"],
+      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
+    },
   ],
+};
+
+const amenityIcons = {
+  WiFi: Wifi,
+  Pool: Waves,
+  Gym: Dumbbell,
+  Spa: Sparkles,
+  Restaurant: Utensils,
 };
 
 const cabTypes = [
@@ -191,6 +821,11 @@ const Bookings = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [confirmedBooking, setConfirmedBooking] = useState<Booking | null>(null);
   const [savedBookings, setSavedBookings] = useState<Booking[]>([]);
+  const [selectedCity, setSelectedCity] = useState<string>("");
+  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+  const [showGallery, setShowGallery] = useState(false);
+  const [galleryHotel, setGalleryHotel] = useState<HotelData | null>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -206,6 +841,45 @@ const Bookings = () => {
     distance: "10",
   });
   const { toast } = useToast();
+
+  const cities = Object.keys(hotelOptions);
+  
+  const filteredHotels = selectedCity 
+    ? hotelOptions[selectedCity].filter(hotel => 
+        selectedAmenities.length === 0 || 
+        selectedAmenities.every(amenity => hotel.amenities.includes(amenity))
+      )
+    : [];
+
+  const toggleAmenity = (amenity: string) => {
+    setSelectedAmenities(prev => 
+      prev.includes(amenity) 
+        ? prev.filter(a => a !== amenity)
+        : [...prev, amenity]
+    );
+  };
+
+  const openGallery = (hotel: HotelData) => {
+    setGalleryHotel(hotel);
+    setCurrentImageIndex(0);
+    setShowGallery(true);
+  };
+
+  const nextImage = () => {
+    if (galleryHotel) {
+      setCurrentImageIndex((prev) => 
+        prev === galleryHotel.images.length - 1 ? 0 : prev + 1
+      );
+    }
+  };
+
+  const prevImage = () => {
+    if (galleryHotel) {
+      setCurrentImageIndex((prev) => 
+        prev === 0 ? galleryHotel.images.length - 1 : prev - 1
+      );
+    }
+  };
 
   useEffect(() => {
     const saved = localStorage.getItem("bookings");
@@ -473,32 +1147,134 @@ For support: support@indiaassist.com | +91 1800-123-4567
               <div className="space-y-4">
                 <h3 className="font-semibold text-lg">Booking Details</h3>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="destination">Destination/City *</Label>
-                  <Select value={formData.destination} onValueChange={(value) => setFormData({ ...formData, destination: value })}>
-                    <SelectTrigger id="destination">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Delhi">Delhi</SelectItem>
-                      <SelectItem value="Mumbai">Mumbai</SelectItem>
-                      <SelectItem value="Jaipur">Jaipur</SelectItem>
-                      <SelectItem value="Agra">Agra</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                {bookingType === "hotel" ? (
+                  <>
+                    {/* City Selection */}
+                    <div className="space-y-2">
+                      <Label htmlFor="city-select">Select City *</Label>
+                      <Select value={selectedCity} onValueChange={setSelectedCity}>
+                        <SelectTrigger id="city-select">
+                          <SelectValue placeholder="Choose a city" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-background z-50">
+                          {cities.map((city) => (
+                            <SelectItem key={city} value={city}>
+                              {city}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-                {bookingType === "hotel" && (
+                    {/* Amenities Filter */}
+                    {selectedCity && (
+                      <div className="space-y-3">
+                        <Label>Filter by Amenities</Label>
+                        <div className="flex flex-wrap gap-3">
+                          {Object.entries(amenityIcons).map(([amenity, Icon]) => (
+                            <div key={amenity} className="flex items-center space-x-2">
+                              <Checkbox
+                                id={amenity}
+                                checked={selectedAmenities.includes(amenity)}
+                                onCheckedChange={() => toggleAmenity(amenity)}
+                              />
+                              <label
+                                htmlFor={amenity}
+                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2 cursor-pointer"
+                              >
+                                <Icon className="h-4 w-4" />
+                                {amenity}
+                              </label>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Hotel Cards */}
+                    {selectedCity && filteredHotels.length > 0 && (
+                      <div className="space-y-3">
+                        <Label>Available Hotels ({filteredHotels.length})</Label>
+                        <div className="grid gap-4 max-h-[500px] overflow-y-auto pr-2">
+                          {filteredHotels.map((hotel) => (
+                            <Card 
+                              key={hotel.name}
+                              className={`cursor-pointer transition-all hover:shadow-md ${
+                                formData.hotel === hotel.name ? 'ring-2 ring-primary' : ''
+                              }`}
+                              onClick={() => {
+                                setFormData({ ...formData, hotel: hotel.name, destination: selectedCity });
+                              }}
+                            >
+                              <CardContent className="p-4">
+                                <div className="flex justify-between items-start mb-3">
+                                  <div>
+                                    <h4 className="font-semibold text-lg">{hotel.name}</h4>
+                                    <div className="flex items-center gap-1 mt-1">
+                                      {Array.from({ length: hotel.stars }).map((_, i) => (
+                                        <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                                      ))}
+                                    </div>
+                                  </div>
+                                  <div className="text-right">
+                                    <p className="text-2xl font-bold text-primary">
+                                      ₹{hotel.basePrice.toLocaleString()}
+                                    </p>
+                                    <p className="text-sm text-muted-foreground">per night</p>
+                                  </div>
+                                </div>
+                                
+                                {/* Amenities */}
+                                <div className="flex flex-wrap gap-2 mb-3">
+                                  {hotel.amenities.map((amenity) => {
+                                    const Icon = amenityIcons[amenity as keyof typeof amenityIcons];
+                                    return (
+                                      <Badge key={amenity} variant="secondary" className="flex items-center gap-1">
+                                        {Icon && <Icon className="h-3 w-3" />}
+                                        {amenity}
+                                      </Badge>
+                                    );
+                                  })}
+                                </div>
+
+                                {/* View Gallery Button */}
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  className="w-full"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    openGallery(hotel);
+                                  }}
+                                >
+                                  <ImageIcon className="h-4 w-4 mr-2" />
+                                  View Photos
+                                </Button>
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {selectedCity && filteredHotels.length === 0 && (
+                      <p className="text-muted-foreground text-center py-4">
+                        No hotels match the selected amenities. Try adjusting your filters.
+                      </p>
+                    )}
+                  </>
+                ) : (
                   <div className="space-y-2">
-                    <Label htmlFor="hotel">Select Hotel *</Label>
-                    <Select value={formData.hotel} onValueChange={(value) => setFormData({ ...formData, hotel: value })}>
-                      <SelectTrigger id="hotel">
-                        <SelectValue placeholder="Choose a hotel" />
+                    <Label htmlFor="destination">Destination/City *</Label>
+                    <Select value={formData.destination} onValueChange={(value) => setFormData({ ...formData, destination: value })}>
+                      <SelectTrigger id="destination">
+                        <SelectValue />
                       </SelectTrigger>
-                      <SelectContent>
-                        {(hotelOptions[formData.destination as keyof typeof hotelOptions] || hotelOptions["Delhi"]).map((hotel) => (
-                          <SelectItem key={hotel.name} value={hotel.name}>
-                            {hotel.name} - {hotel.stars}⭐ (₹{hotel.basePrice.toLocaleString()}/night)
+                      <SelectContent className="bg-background z-50">
+                        {cities.map((city) => (
+                          <SelectItem key={city} value={city}>
+                            {city}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -808,6 +1584,107 @@ For support: support@indiaassist.com | +91 1800-123-4567
                 Print Receipt
               </Button>
               <Button onClick={() => setShowConfirmation(false)} className="flex-1 gradient-saffron text-white">
+                Close
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Photo Gallery Dialog */}
+        <Dialog open={showGallery} onOpenChange={setShowGallery}>
+          <DialogContent className="max-w-4xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <ImageIcon className="h-5 w-5" />
+                {galleryHotel?.name} - Photo Gallery
+              </DialogTitle>
+              <DialogDescription>
+                {galleryHotel?.stars}⭐ Hotel | ₹{galleryHotel?.basePrice.toLocaleString()}/night
+              </DialogDescription>
+            </DialogHeader>
+            {galleryHotel && (
+              <div className="space-y-4">
+                {/* Main Image */}
+                <div className="relative aspect-video bg-muted rounded-lg overflow-hidden">
+                  <img 
+                    src={galleryHotel.images[currentImageIndex]} 
+                    alt={`${galleryHotel.name} - Image ${currentImageIndex + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                  {/* Navigation Buttons */}
+                  <Button
+                    variant="secondary"
+                    size="icon"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-background/80 hover:bg-background"
+                    onClick={prevImage}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="icon"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-background/80 hover:bg-background"
+                    onClick={nextImage}
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                  {/* Image Counter */}
+                  <div className="absolute bottom-4 right-4 bg-background/80 px-3 py-1 rounded-full text-sm">
+                    {currentImageIndex + 1} / {galleryHotel.images.length}
+                  </div>
+                </div>
+
+                {/* Thumbnail Strip */}
+                <div className="flex gap-2 overflow-x-auto pb-2">
+                  {galleryHotel.images.map((img, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setCurrentImageIndex(idx)}
+                      className={`flex-shrink-0 w-20 h-20 rounded-md overflow-hidden border-2 transition-all ${
+                        idx === currentImageIndex 
+                          ? 'border-primary ring-2 ring-primary/20' 
+                          : 'border-transparent hover:border-muted-foreground/50'
+                      }`}
+                    >
+                      <img 
+                        src={img} 
+                        alt={`Thumbnail ${idx + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+
+                {/* Hotel Info */}
+                <div className="border-t pt-4">
+                  <h4 className="font-semibold mb-2">Amenities</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {galleryHotel.amenities.map((amenity) => {
+                      const Icon = amenityIcons[amenity as keyof typeof amenityIcons];
+                      return (
+                        <Badge key={amenity} variant="outline" className="flex items-center gap-1">
+                          {Icon && <Icon className="h-3 w-3" />}
+                          {amenity}
+                        </Badge>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+            <div className="flex gap-3 pt-2">
+              <Button 
+                onClick={() => {
+                  if (galleryHotel && selectedCity) {
+                    setFormData({ ...formData, hotel: galleryHotel.name, destination: selectedCity });
+                    setShowGallery(false);
+                  }
+                }} 
+                className="flex-1 gradient-hero text-white"
+              >
+                Select This Hotel
+              </Button>
+              <Button variant="outline" onClick={() => setShowGallery(false)} className="flex-1">
                 Close
               </Button>
             </div>

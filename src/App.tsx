@@ -7,6 +7,7 @@ import Navigation from "./components/Navigation";
 import { LanguageProvider } from "./components/LanguageTranslator";
 import { AuthProvider } from "./hooks/useAuth";
 import TravelAssistant from "./components/TravelAssistant";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
 import Destinations from "./pages/Destinations";
 import Maps from "./pages/Maps";
@@ -36,19 +37,19 @@ const App = () => (
               <Navigation />
               <main className="flex-1">
                 <Routes>
-                  <Route path="/" element={<Home />} />
                   <Route path="/auth" element={<Auth />} />
-                  <Route path="/destinations" element={<Destinations />} />
-                  <Route path="/maps" element={<Maps />} />
-                  <Route path="/blog" element={<Blog />} />
-                  <Route path="/trip-planner" element={<TripPlanner />} />
-                  <Route path="/currency" element={<Currency />} />
-                  <Route path="/chat" element={<Chat />} />
-                  <Route path="/bookings" element={<Bookings />} />
-                  <Route path="/emergency" element={<Emergency />} />
-                  <Route path="/contact" element={<Contact />} />
-                  <Route path="/blog/:id" element={<BlogPost />} />
-                  <Route path="/translator" element={<UniversalTranslator />} />
+                  <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+                  <Route path="/destinations" element={<ProtectedRoute><Destinations /></ProtectedRoute>} />
+                  <Route path="/maps" element={<ProtectedRoute><Maps /></ProtectedRoute>} />
+                  <Route path="/blog" element={<ProtectedRoute><Blog /></ProtectedRoute>} />
+                  <Route path="/trip-planner" element={<ProtectedRoute><TripPlanner /></ProtectedRoute>} />
+                  <Route path="/currency" element={<ProtectedRoute><Currency /></ProtectedRoute>} />
+                  <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
+                  <Route path="/bookings" element={<ProtectedRoute><Bookings /></ProtectedRoute>} />
+                  <Route path="/emergency" element={<ProtectedRoute><Emergency /></ProtectedRoute>} />
+                  <Route path="/contact" element={<ProtectedRoute><Contact /></ProtectedRoute>} />
+                  <Route path="/blog/:id" element={<ProtectedRoute><BlogPost /></ProtectedRoute>} />
+                  <Route path="/translator" element={<ProtectedRoute><UniversalTranslator /></ProtectedRoute>} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </main>

@@ -5,3 +5,9 @@ verify_jwt = false
 
 [functions.translate]
 verify_jwt = false
+
+[functions.search-hotels]
+verify_jwt = false
+
+[functions.search-flights]
+verify_jwt = false

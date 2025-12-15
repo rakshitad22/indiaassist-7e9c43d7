@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, MessageCircle, Phone, Landmark, Plane, Shield } from "lucide-react";
 import InteractiveBackground from "@/components/InteractiveBackground";
 import WeatherWidget from "@/components/WeatherWidget";
+import NearbyPlacesWidget from "@/components/NearbyPlacesWidget";
 
 const Home = () => {
   const features = [
@@ -95,9 +96,10 @@ const Home = () => {
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center mb-12">How We Help You</h2>
           
-          {/* Weather Widget */}
-          <div className="max-w-md mx-auto mb-12">
+          {/* Weather and Nearby Places Widgets */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto mb-12">
             <WeatherWidget />
+            <NearbyPlacesWidget />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calendar, Car, Hotel, Users, Plane, CheckCircle, Download, Printer, Wifi, Waves, Dumbbell, Sparkles, Utensils, Star, Image as ImageIcon, ChevronLeft, ChevronRight, Search, Loader2 } from "lucide-react";
+import { Calendar, Car, Hotel, Users, Plane, CheckCircle, Download, Printer, Wifi, Waves, Dumbbell, Sparkles, Utensils, Star, Image as ImageIcon, ChevronLeft, ChevronRight, Search, Loader2, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -16,6 +16,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useRealBookings, RealHotel, RealFlight } from "@/hooks/useRealBookings";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Booking {
   id: string;
@@ -1001,6 +1002,47 @@ const Bookings = () => {
     return `PNR${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
   };
 
+  const sendConfirmationEmail = async (booking: Booking) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('send-booking-confirmation', {
+        body: {
+          email: booking.email,
+          name: booking.name,
+          bookingType: booking.type,
+          bookingId: booking.bookingId,
+          pnr: booking.pnr,
+          destination: booking.destination,
+          date: booking.date,
+          returnDate: booking.returnDate,
+          guests: booking.guests,
+          hotel: booking.hotel,
+          cabType: booking.cabType,
+          pickup: booking.pickup,
+          flightClass: booking.class,
+          fare: booking.fare,
+          taxes: booking.taxes,
+          total: booking.total,
+        },
+      });
+
+      if (error) {
+        console.error('Email error:', error);
+        toast({
+          title: "Booking Confirmed",
+          description: "Your booking is confirmed but we couldn't send the confirmation email.",
+          variant: "default",
+        });
+      } else {
+        toast({
+          title: "Email Sent",
+          description: `Confirmation email sent to ${booking.email}`,
+        });
+      }
+    } catch (err) {
+      console.error('Error sending email:', err);
+    }
+  };
+
   const calculateHotelCost = () => {
     const hotels = hotelOptions[formData.destination as keyof typeof hotelOptions] || hotelOptions["Delhi"];
     const selectedHotel = hotels.find(h => h.name === formData.hotel) || hotels[0];
@@ -1089,6 +1131,9 @@ const Bookings = () => {
     setSavedBookings(updatedBookings);
     localStorage.setItem("bookings", JSON.stringify(updatedBookings));
     setShowConfirmation(true);
+    
+    // Send confirmation email
+    sendConfirmationEmail(booking);
   };
 
   const downloadReceipt = () => {

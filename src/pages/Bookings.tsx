@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calendar, Car, Hotel, Users, Plane, CheckCircle, Download, Printer, Wifi, Waves, Dumbbell, Sparkles, Utensils, Star, Image as ImageIcon, ChevronLeft, ChevronRight, Search, Loader2, Mail, Phone } from "lucide-react";
+import { Calendar, Car, Hotel, Users, Plane, CheckCircle, Download, Printer, Wifi, Waves, Dumbbell, Sparkles, Utensils, Star, Image as ImageIcon, ChevronLeft, ChevronRight, Search, Loader2, Mail, Phone, MessageCircle, CreditCard } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -1084,6 +1084,93 @@ const Bookings = () => {
     }
   };
 
+  const sendConfirmationWhatsApp = async (booking: Booking) => {
+    if (!booking.phone) return;
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('send-booking-whatsapp', {
+        body: {
+          phoneNumber: booking.phone,
+          bookingType: booking.type,
+          bookingDetails: {
+            name: booking.name,
+            destination: booking.destination,
+            origin: booking.pickup,
+            checkIn: booking.date,
+            checkOut: booking.returnDate,
+            departureDate: booking.date,
+            returnDate: booking.returnDate,
+            price: `₹${booking.total.toLocaleString()}`,
+            hotelName: booking.hotel,
+            airline: booking.type === 'flight' ? 'Your selected airline' : undefined,
+            bookingId: booking.bookingId,
+          },
+        },
+      });
+
+      if (error) {
+        console.error('WhatsApp error:', error);
+      } else {
+        toast({
+          title: "WhatsApp Sent",
+          description: `Confirmation sent via WhatsApp to ${booking.phone}`,
+        });
+      }
+    } catch (err) {
+      console.error('Error sending WhatsApp:', err);
+    }
+  };
+
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+
+  const initiatePayment = async (booking: Booking) => {
+    setIsProcessingPayment(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('create-booking-payment', {
+        body: {
+          amount: booking.total,
+          currency: 'inr',
+          bookingType: booking.type,
+          bookingDetails: {
+            name: booking.name,
+            email: booking.email,
+            destination: booking.destination,
+            date: booking.date,
+            hotelName: booking.hotel,
+            origin: booking.pickup,
+            returnDate: booking.returnDate,
+          },
+        },
+      });
+
+      if (error) {
+        console.error('Payment error:', error);
+        toast({
+          title: "Payment Failed",
+          description: "Could not initiate payment. Please try again.",
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      if (data?.url) {
+        window.open(data.url, '_blank');
+        return true;
+      }
+      return false;
+    } catch (err) {
+      console.error('Error initiating payment:', err);
+      toast({
+        title: "Payment Error",
+        description: "An error occurred while processing payment.",
+        variant: "destructive",
+      });
+      return false;
+    } finally {
+      setIsProcessingPayment(false);
+    }
+  };
+
   const calculateHotelCost = () => {
     const hotels = hotelOptions[formData.destination as keyof typeof hotelOptions] || hotelOptions["Delhi"];
     const selectedHotel = hotels.find(h => h.name === formData.hotel) || hotels[0];
@@ -1173,9 +1260,10 @@ const Bookings = () => {
     localStorage.setItem("bookings", JSON.stringify(updatedBookings));
     setShowConfirmation(true);
     
-    // Send confirmation email and SMS
+    // Send confirmation email, SMS, and WhatsApp
     sendConfirmationEmail(booking);
     sendConfirmationSms(booking);
+    sendConfirmationWhatsApp(booking);
   };
 
   const downloadReceipt = () => {
@@ -1963,23 +2051,42 @@ For support: support@indiaassist.com | +91 1800-123-4567
                 </Card>
                 <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg">
                   <p className="text-sm text-center">
-                    ℹ️ This is a demo booking. No actual reservation has been made. You can download your receipt below.
+                    ℹ️ This is a demo booking. No actual reservation has been made. You can download your receipt or proceed to payment below.
                   </p>
                 </div>
               </div>
             )}
-            <div className="flex gap-3">
-              <Button variant="outline" onClick={downloadReceipt} className="flex-1">
-                <Download className="h-4 w-4 mr-2" />
-                Download Receipt
+            <div className="space-y-3">
+              <Button 
+                onClick={() => confirmedBooking && initiatePayment(confirmedBooking)} 
+                className="w-full gradient-saffron text-white"
+                disabled={isProcessingPayment}
+              >
+                {isProcessingPayment ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <CreditCard className="h-4 w-4 mr-2" />
+                    Pay Now - ₹{confirmedBooking?.total.toLocaleString()}
+                  </>
+                )}
               </Button>
-              <Button variant="outline" onClick={printReceipt} className="flex-1">
-                <Printer className="h-4 w-4 mr-2" />
-                Print Receipt
-              </Button>
-              <Button onClick={() => setShowConfirmation(false)} className="flex-1 gradient-saffron text-white">
-                Close
-              </Button>
+              <div className="flex gap-3">
+                <Button variant="outline" onClick={downloadReceipt} className="flex-1">
+                  <Download className="h-4 w-4 mr-2" />
+                  Download
+                </Button>
+                <Button variant="outline" onClick={printReceipt} className="flex-1">
+                  <Printer className="h-4 w-4 mr-2" />
+                  Print
+                </Button>
+                <Button variant="ghost" onClick={() => setShowConfirmation(false)} className="flex-1">
+                  Close
+                </Button>
+              </div>
             </div>
           </DialogContent>
         </Dialog>

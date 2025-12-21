@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calendar, Car, Hotel, Users, Plane, CheckCircle, Download, Printer, Wifi, Waves, Dumbbell, Sparkles, Utensils, Star, Image as ImageIcon, ChevronLeft, ChevronRight, Search, Loader2, Mail } from "lucide-react";
+import { Calendar, Car, Hotel, Users, Plane, CheckCircle, Download, Printer, Wifi, Waves, Dumbbell, Sparkles, Utensils, Star, Image as ImageIcon, ChevronLeft, ChevronRight, Search, Loader2, Mail, Phone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -1043,6 +1043,47 @@ const Bookings = () => {
     }
   };
 
+  const sendConfirmationSms = async (booking: Booking) => {
+    if (!booking.phone) return;
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('send-booking-sms', {
+        body: {
+          phoneNumber: booking.phone,
+          bookingType: booking.type,
+          bookingDetails: {
+            name: booking.name,
+            destination: booking.destination,
+            origin: booking.pickup,
+            checkIn: booking.date,
+            checkOut: booking.returnDate,
+            departureDate: booking.date,
+            returnDate: booking.returnDate,
+            price: `₹${booking.total.toLocaleString()}`,
+            hotelName: booking.hotel,
+            airline: booking.type === 'flight' ? 'Your selected airline' : undefined,
+          },
+        },
+      });
+
+      if (error) {
+        console.error('SMS error:', error);
+        toast({
+          title: "SMS Not Sent",
+          description: "Booking confirmed but we couldn't send the SMS notification.",
+          variant: "default",
+        });
+      } else {
+        toast({
+          title: "SMS Sent",
+          description: `Confirmation SMS sent to ${booking.phone}`,
+        });
+      }
+    } catch (err) {
+      console.error('Error sending SMS:', err);
+    }
+  };
+
   const calculateHotelCost = () => {
     const hotels = hotelOptions[formData.destination as keyof typeof hotelOptions] || hotelOptions["Delhi"];
     const selectedHotel = hotels.find(h => h.name === formData.hotel) || hotels[0];
@@ -1132,8 +1173,9 @@ const Bookings = () => {
     localStorage.setItem("bookings", JSON.stringify(updatedBookings));
     setShowConfirmation(true);
     
-    // Send confirmation email
+    // Send confirmation email and SMS
     sendConfirmationEmail(booking);
+    sendConfirmationSms(booking);
   };
 
   const downloadReceipt = () => {

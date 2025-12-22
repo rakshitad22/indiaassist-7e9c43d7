@@ -1260,10 +1260,38 @@ const Bookings = () => {
     localStorage.setItem("bookings", JSON.stringify(updatedBookings));
     setShowConfirmation(true);
     
-    // Send confirmation email, SMS, and WhatsApp
+    // Send confirmation email (using new rich HTML template), SMS, and WhatsApp
     sendConfirmationEmail(booking);
     sendConfirmationSms(booking);
     sendConfirmationWhatsApp(booking);
+    
+    // Send push notification
+    sendPushNotification(booking);
+  };
+
+  const sendPushNotification = async (booking: Booking) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const bookingTypeLabel = booking.type === "hotel" ? "Hotel" : 
+                               booking.type === "flight" ? "Flight" : "Cab";
+
+      await supabase.functions.invoke('send-push-notification', {
+        body: {
+          action: 'send',
+          userId: user.id,
+          payload: {
+            title: `${bookingTypeLabel} Booking Confirmed!`,
+            body: `Your booking ${booking.bookingId} to ${booking.destination} is confirmed. Total: ₹${booking.total.toLocaleString()}`,
+            tag: `booking-${booking.bookingId}`,
+            data: { url: '/bookings', bookingId: booking.bookingId },
+          },
+        },
+      });
+    } catch (err) {
+      console.error('Error sending push notification:', err);
+    }
   };
 
   const downloadReceipt = () => {

@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { Resend } from "https://esm.sh/resend@2.0.0";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
@@ -9,6 +10,7 @@ const corsHeaders = {
 };
 
 interface BookingEmailProps {
+  userId?: string;
   name: string;
   email: string;
   bookingType: "hotel" | "cab" | "flight";
@@ -25,6 +27,7 @@ interface BookingEmailProps {
   fare: number;
   taxes: number;
   total: number;
+  notificationType?: 'booking_confirmations' | 'booking_reminders' | 'price_alerts' | 'travel_tips' | 'promotional';
 }
 
 // Generate rich HTML email template
@@ -178,7 +181,47 @@ const handler = async (req: Request): Promise<Response> => {
 
   try {
     const booking: BookingEmailProps = await req.json();
-    console.log("Sending rich HTML email to:", booking.email);
+    console.log("Processing email request for:", booking.email, "type:", booking.notificationType);
+
+    // Check user's notification preferences if userId is provided
+    if (booking.userId) {
+      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+      const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+      const supabase = createClient(supabaseUrl, supabaseKey);
+
+      const { data: preferences, error: prefError } = await supabase
+        .from("notification_preferences")
+        .select("*")
+        .eq("user_id", booking.userId)
+        .maybeSingle();
+
+      if (prefError) {
+        console.error("Error fetching preferences:", prefError);
+      }
+
+      // If preferences exist, check if email is enabled and the notification type is allowed
+      if (preferences) {
+        // Check if email notifications are globally disabled
+        if (!preferences.email_enabled) {
+          console.log("Email notifications disabled by user preference");
+          return new Response(
+            JSON.stringify({ message: "Email notifications disabled by user", sent: false }),
+            { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+          );
+        }
+
+        // Check if this specific notification type is enabled
+        const notificationType = booking.notificationType || 'booking_confirmations';
+        const typeEnabled = preferences[notificationType];
+        if (typeEnabled === false) {
+          console.log(`Notification type ${notificationType} disabled by user preference`);
+          return new Response(
+            JSON.stringify({ message: `${notificationType} notifications disabled by user`, sent: false }),
+            { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+          );
+        }
+      }
+    }
 
     const bookingTypeLabel = booking.bookingType === "hotel" ? "Hotel" : 
                              booking.bookingType === "flight" ? "Flight" : "Cab";
@@ -194,7 +237,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log("Rich email sent successfully:", emailResponse);
 
-    return new Response(JSON.stringify(emailResponse), {
+    return new Response(JSON.stringify({ ...emailResponse, sent: true }), {
       status: 200,
       headers: { "Content-Type": "application/json", ...corsHeaders },
     });

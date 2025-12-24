@@ -20,6 +20,7 @@ interface SendPushRequest {
   action?: 'get-vapid-key' | 'send';
   userId?: string;
   payload?: PushPayload;
+  notificationType?: 'booking_confirmations' | 'booking_reminders' | 'price_alerts' | 'travel_tips' | 'promotional';
 }
 
 // Web Push implementation using raw crypto
@@ -101,7 +102,7 @@ const handler = async (req: Request): Promise<Response> => {
 
   try {
     const request: SendPushRequest = await req.json();
-    console.log("Push notification request:", request.action);
+    console.log("Push notification request:", request.action, "type:", request.notificationType);
 
     const vapidPublicKey = Deno.env.get("VAPID_PUBLIC_KEY");
     const vapidPrivateKey = Deno.env.get("VAPID_PRIVATE_KEY");
@@ -127,6 +128,41 @@ const handler = async (req: Request): Promise<Response> => {
       const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
       const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
       const supabase = createClient(supabaseUrl, supabaseKey);
+
+      // Check user's notification preferences
+      if (request.notificationType) {
+        const { data: preferences, error: prefError } = await supabase
+          .from("notification_preferences")
+          .select("*")
+          .eq("user_id", request.userId)
+          .maybeSingle();
+
+        if (prefError) {
+          console.error("Error fetching preferences:", prefError);
+        }
+
+        // If preferences exist, check if push is enabled and the notification type is allowed
+        if (preferences) {
+          // Check if push notifications are globally disabled
+          if (!preferences.push_enabled) {
+            console.log("Push notifications disabled by user preference");
+            return new Response(
+              JSON.stringify({ message: "Push notifications disabled by user", sent: 0 }),
+              { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+            );
+          }
+
+          // Check if this specific notification type is enabled
+          const typeEnabled = preferences[request.notificationType];
+          if (typeEnabled === false) {
+            console.log(`Notification type ${request.notificationType} disabled by user preference`);
+            return new Response(
+              JSON.stringify({ message: `${request.notificationType} notifications disabled by user`, sent: 0 }),
+              { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+            );
+          }
+        }
+      }
 
       // Get user's push subscriptions
       const { data: subscriptions, error } = await supabase

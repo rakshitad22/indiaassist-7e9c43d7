@@ -23,6 +23,7 @@ import BlogPost from "./pages/BlogPost";
 import UniversalTranslator from "./components/UniversalTranslator";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
+import NotificationPreferences from "./pages/NotificationPreferences";
 
 const queryClient = new QueryClient();
 
@@ -52,6 +53,7 @@ const App = () => (
                   <Route path="/blog/:id" element={<ProtectedRoute><BlogPost /></ProtectedRoute>} />
                   <Route path="/translator" element={<ProtectedRoute><UniversalTranslator /></ProtectedRoute>} />
                   <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+                  <Route path="/notifications" element={<ProtectedRoute><NotificationPreferences /></ProtectedRoute>} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </main>

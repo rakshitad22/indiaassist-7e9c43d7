@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, MapPin, LogIn, LogOut, User, Settings } from "lucide-react";
+import { Menu, X, MapPin, LogIn, LogOut, User, Settings, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import LanguageTranslator from "./LanguageTranslator";
@@ -82,6 +82,10 @@ const Navigation = () => {
                     <DropdownMenuItem onClick={() => navigate("/profile")}>
                       <Settings className="h-4 w-4 mr-2" />
                       Profile Settings
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate("/notifications")}>
+                      <Bell className="h-4 w-4 mr-2" />
+                      Notification Preferences
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleSignOut}>

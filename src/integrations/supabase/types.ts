@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      notification_preferences: {
+        Row: {
+          booking_confirmations: boolean
+          booking_reminders: boolean
+          created_at: string
+          email_enabled: boolean
+          id: string
+          price_alerts: boolean
+          promotional: boolean
+          push_enabled: boolean
+          sms_enabled: boolean
+          travel_tips: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          booking_confirmations?: boolean
+          booking_reminders?: boolean
+          created_at?: string
+          email_enabled?: boolean
+          id?: string
+          price_alerts?: boolean
+          promotional?: boolean
+          push_enabled?: boolean
+          sms_enabled?: boolean
+          travel_tips?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          booking_confirmations?: boolean
+          booking_reminders?: boolean
+          created_at?: string
+          email_enabled?: boolean
+          id?: string
+          price_alerts?: boolean
+          promotional?: boolean
+          push_enabled?: boolean
+          sms_enabled?: boolean
+          travel_tips?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

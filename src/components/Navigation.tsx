@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
+import { PushNotificationToggle } from "./PushNotificationToggle";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -65,6 +66,7 @@ const Navigation = () => {
               </Link>
             ))}
             <LanguageTranslator />
+            <PushNotificationToggle />
             
             {/* Auth Button */}
             {!isLoading && (
@@ -122,8 +124,9 @@ const Navigation = () => {
                   </Button>
                 </Link>
               ))}
-              <div className="px-2 pt-2">
+              <div className="px-2 pt-2 flex items-center gap-2">
                 <LanguageTranslator />
+                <PushNotificationToggle />
               </div>
               
               {/* Mobile Auth Button */}

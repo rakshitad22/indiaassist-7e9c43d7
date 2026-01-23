@@ -68,8 +68,9 @@ const Contact = () => {
             <h2 className="text-lg font-semibold mb-2">Project Team</h2>
             <div className="flex flex-wrap justify-center gap-3 mb-2">
               <span className="px-4 py-2 bg-primary/10 rounded-lg font-medium">Rakshita D</span>
-              <span className="px-4 py-2 bg-primary/10 rounded-lg font-medium">Bala Mahesh</span>
-              <span className="px-4 py-2 bg-primary/10 rounded-lg font-medium">Akshatha B G</span>
+              <span className="px-4 py-2 bg-primary/10 rounded-lg font-medium">Anu Nyamgoud</span>
+              <span className="px-4 py-2 bg-primary/10 rounded-lg font-medium">S Vaishnavi Bharadwaj</span>
+              <span className="px-4 py-2 bg-primary/10 rounded-lg font-medium">Punith Reddy K R</span>
             </div>
             <p className="text-sm text-muted-foreground">
               Department of Information Science and Engineering<br />

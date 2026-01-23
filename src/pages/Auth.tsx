@@ -7,8 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { User, Mail, Lock, Plane } from "lucide-react";
+import { User, Mail, Lock, Plane, Eye, EyeOff } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import InteractiveBackground from "@/components/InteractiveBackground";
 
@@ -28,6 +29,28 @@ const Auth = () => {
   const [otpCode, setOtpCode] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showSignupPassword, setShowSignupPassword] = useState(false);
+
+  const getPasswordStrength = (password: string) => {
+    let strength = 0;
+    if (password.length >= 6) strength += 25;
+    if (password.length >= 8) strength += 15;
+    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength += 20;
+    if (/\d/.test(password)) strength += 20;
+    if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) strength += 20;
+    return Math.min(strength, 100);
+  };
+
+  const getStrengthLabel = (strength: number) => {
+    if (strength < 30) return { label: "Weak", color: "bg-destructive" };
+    if (strength < 60) return { label: "Fair", color: "bg-orange-500" };
+    if (strength < 80) return { label: "Good", color: "bg-yellow-500" };
+    return { label: "Strong", color: "bg-green-500" };
+  };
+
+  const passwordStrength = getPasswordStrength(password);
+  const strengthInfo = getStrengthLabel(passwordStrength);
 
   const from = (location.state as any)?.from?.pathname || "/";
 
@@ -323,13 +346,20 @@ const Auth = () => {
                       <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="login-password"
-                        type="password"
+                        type={showPassword ? "text" : "password"}
                         placeholder="••••••••"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="pl-10"
+                        className="pl-10 pr-10"
                         required
                       />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
                     </div>
                   </div>
 
@@ -394,14 +424,35 @@ const Auth = () => {
                     <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="signup-password"
-                      type="password"
+                      type={showSignupPassword ? "text" : "password"}
                       placeholder="••••••••"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="pl-10"
+                      className="pl-10 pr-10"
                       required
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowSignupPassword(!showSignupPassword)}
+                      className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
+                    >
+                      {showSignupPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
                   </div>
+                  {password && (
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-muted-foreground">Password strength</span>
+                        <span className={`font-medium ${passwordStrength < 30 ? 'text-destructive' : passwordStrength < 60 ? 'text-orange-500' : passwordStrength < 80 ? 'text-yellow-600' : 'text-green-600'}`}>
+                          {strengthInfo.label}
+                        </span>
+                      </div>
+                      <Progress value={passwordStrength} className="h-1.5" />
+                      <p className="text-xs text-muted-foreground">
+                        Use 8+ characters with uppercase, lowercase, numbers & symbols
+                      </p>
+                    </div>
+                  )}
                 </div>
                 
                 <Button type="submit" className="w-full" disabled={isLoading}>

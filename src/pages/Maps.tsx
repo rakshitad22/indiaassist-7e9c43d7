@@ -409,6 +409,7 @@ const allIndianPlaces = {
 
 const Maps = () => {
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
+  const [selectedPlace, setSelectedPlace] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
   const cities = Object.keys(allIndianPlaces);
@@ -469,32 +470,43 @@ const Maps = () => {
 
                 <div className="grid md:grid-cols-2 gap-4 mb-6">
                   {places.map((place, index) => (
-                    <div
+                    <button
                       key={index}
-                      className="p-4 bg-gradient-to-br from-primary/5 to-accent/5 rounded-lg border border-border hover:shadow-card transition-smooth"
+                      onClick={() => setSelectedPlace(place)}
+                      className={`p-4 bg-gradient-to-br from-primary/5 to-accent/5 rounded-lg border transition-smooth text-left w-full ${
+                        selectedPlace === place
+                          ? "border-primary shadow-card"
+                          : "border-border hover:shadow-card hover:border-primary/50"
+                      }`}
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
+                          selectedPlace === place
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-primary/10 text-primary"
+                        }`}>
                           {index + 1}
                         </div>
                         <p className="font-medium">{place}</p>
                       </div>
-                    </div>
+                    </button>
                   ))}
                 </div>
 
                 {/* Embedded Google Map */}
                 <div className="rounded-lg overflow-hidden shadow-lg">
                   <iframe
-                    title={`Map of ${selectedCity}`}
+                    title={`Map of ${selectedPlace || selectedCity}`}
                     width="100%"
                     height="400"
                     style={{ border: 0 }}
                     loading="lazy"
                     allowFullScreen
                     src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(
-                      selectedCity + ", India"
-                    )}&zoom=12`}
+                      selectedPlace 
+                        ? `${selectedPlace}, ${selectedCity}, India` 
+                        : `${selectedCity}, India`
+                    )}&zoom=${selectedPlace ? 15 : 12}`}
                   />
                 </div>
               </CardContent>
@@ -508,6 +520,7 @@ const Maps = () => {
                 key={city}
                 onClick={() => {
                   setSelectedCity(city);
+                  setSelectedPlace(null);
                   window.scrollTo({ top: 0, behavior: "smooth" });
                 }}
                 variant={selectedCity === city ? "default" : "outline"}

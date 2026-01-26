@@ -4,6 +4,7 @@ import { Menu, X, MapPin, LogIn, LogOut, User, Settings, Bell } from "lucide-rea
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import LanguageTranslator from "./LanguageTranslator";
+import { ThemeToggle } from "./ThemeToggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -66,6 +67,7 @@ const Navigation = () => {
               </Link>
             ))}
             <LanguageTranslator />
+            <ThemeToggle />
             <PushNotificationToggle />
             
             {/* Auth Button */}
@@ -130,6 +132,7 @@ const Navigation = () => {
               ))}
               <div className="px-2 pt-2 flex items-center gap-2">
                 <LanguageTranslator />
+                <ThemeToggle />
                 <PushNotificationToggle />
               </div>
               

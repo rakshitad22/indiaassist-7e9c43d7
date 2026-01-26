@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navigation from "./components/Navigation";
 import { LanguageProvider } from "./components/LanguageTranslator";
 import { AuthProvider } from "./hooks/useAuth";
+import { ThemeProvider } from "./components/ThemeProvider";
 import TravelAssistant from "./components/TravelAssistant";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
@@ -29,11 +30,12 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <AuthProvider>
-        <LanguageProvider>
-          <Toaster />
-          <Sonner />
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <TooltipProvider>
+        <AuthProvider>
+          <LanguageProvider>
+            <Toaster />
+            <Sonner />
           <BrowserRouter>
             <div className="min-h-screen flex flex-col">
               <Navigation />
@@ -65,10 +67,11 @@ const App = () => (
                 </div>
               </footer>
             </div>
-          </BrowserRouter>
-        </LanguageProvider>
-      </AuthProvider>
-    </TooltipProvider>
+            </BrowserRouter>
+          </LanguageProvider>
+        </AuthProvider>
+      </TooltipProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 

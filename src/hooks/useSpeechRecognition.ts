@@ -64,24 +64,24 @@ export const useSpeechRecognition = (language: string = 'en-US'): SpeechRecognit
     recognitionRef.current = new SpeechRecognitionClass();
     
     const recognition = recognitionRef.current;
-    recognition.continuous = true;
-    recognition.interimResults = true;
+    recognition.continuous = false; // Changed to false to prevent duplicates
+    recognition.interimResults = false; // Only get final results
     recognition.lang = language;
 
     recognition.onresult = (event: ISpeechRecognitionEvent) => {
       let finalTranscript = '';
-      let interimTranscript = '';
 
       for (let i = event.resultIndex; i < event.results.length; i++) {
         const result = event.results[i];
         if (result.isFinal) {
           finalTranscript += result[0].transcript;
-        } else {
-          interimTranscript += result[0].transcript;
         }
       }
 
-      setTranscript(finalTranscript || interimTranscript);
+      // Only set transcript if we have a final result
+      if (finalTranscript) {
+        setTranscript(finalTranscript.trim());
+      }
     };
 
     recognition.onerror = (event: ISpeechRecognitionErrorEvent) => {

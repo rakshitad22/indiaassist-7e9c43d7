@@ -845,6 +845,7 @@ const Bookings = () => {
     hotel: "",
     cabType: "Sedan",
     distance: "10",
+    budgetClass: "middle", // Added budget class for travelers
   });
   const { toast } = useToast();
   
@@ -1890,23 +1891,41 @@ For support: support@indiaassist.com | +91 1800-123-4567
                   </div>
                 )}
 
-                <div className="space-y-2">
-                  <Label htmlFor="guests">
-                    <Users className="h-4 w-4 inline mr-1" />
-                    Number of {bookingType === "hotel" ? "Guests" : "Passengers"}
-                  </Label>
-                  <Select value={formData.guests} onValueChange={(value) => setFormData({ ...formData, guests: value })}>
-                    <SelectTrigger id="guests">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {[1, 2, 3, 4, 5, 6].map((num) => (
-                        <SelectItem key={num} value={num.toString()}>
-                          {num} {num === 1 ? (bookingType === "hotel" ? "Guest" : "Passenger") : (bookingType === "hotel" ? "Guests" : "Passengers")}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="guests">
+                      <Users className="h-4 w-4 inline mr-1" />
+                      Number of {bookingType === "hotel" ? "Guests" : "Passengers"}
+                    </Label>
+                    <Select value={formData.guests} onValueChange={(value) => setFormData({ ...formData, guests: value })}>
+                      <SelectTrigger id="guests">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {[1, 2, 3, 4, 5, 6, 7, 8, 10].map((num) => (
+                          <SelectItem key={num} value={num.toString()}>
+                            {num} {num === 1 ? (bookingType === "hotel" ? "Guest" : "Passenger") : (bookingType === "hotel" ? "Guests" : "Passengers")}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="budgetClass">
+                      Budget Category
+                    </Label>
+                    <Select value={formData.budgetClass} onValueChange={(value) => setFormData({ ...formData, budgetClass: value })}>
+                      <SelectTrigger id="budgetClass">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="budget">💰 Budget Traveler (Economy options)</SelectItem>
+                        <SelectItem value="middle">🏨 Mid-Range (Comfort & value)</SelectItem>
+                        <SelectItem value="luxury">👑 Luxury (Premium experience)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
                 {/* Cost Estimate */}

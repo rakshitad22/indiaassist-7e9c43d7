@@ -95,14 +95,32 @@ const Auth = () => {
   const validateEmail = (email: string): boolean => {
     // Comprehensive email validation regex
     const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-    return emailRegex.test(email) && email.includes('.') && email.split('@')[1].includes('.');
+    
+    if (!emailRegex.test(email) || !email.includes('.') || !email.split('@')[1].includes('.')) {
+      return false;
+    }
+
+    // Check for valid domain extensions (common TLDs)
+    const domain = email.split('@')[1].toLowerCase();
+    const validTLDs = ['com', 'org', 'net', 'edu', 'gov', 'in', 'co.in', 'io', 'info', 'biz', 'co', 'us', 'uk', 'ca', 'au', 'de', 'fr', 'jp', 'cn', 'ru', 'br', 'mx', 'es', 'it', 'nl', 'se', 'no', 'dk', 'fi', 'pl', 'cz', 'at', 'ch', 'be', 'pt', 'gr', 'tr', 'il', 'ae', 'sg', 'hk', 'nz', 'za', 'kr', 'tw', 'id', 'my', 'ph', 'th', 'vn'];
+    const domainParts = domain.split('.');
+    const tld = domainParts.slice(-2).join('.'); // Check for two-part TLDs like co.in
+    const lastPart = domainParts[domainParts.length - 1];
+    
+    const hasValidTLD = validTLDs.includes(tld) || validTLDs.includes(lastPart);
+    
+    // Check domain has valid format (not just numbers, has letters)
+    const domainName = domain.split('.')[0];
+    const hasLetters = /[a-zA-Z]/.test(domainName);
+    
+    return hasValidTLD && hasLetters;
   };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!validateEmail(email)) {
-      toast.error("Please enter a valid email address (e.g., user@example.com)");
+      toast.error("Please enter a valid email address with a recognized domain (e.g., user@gmail.com)");
       return;
     }
 

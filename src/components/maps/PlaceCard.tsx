@@ -1,4 +1,4 @@
-import { Navigation, MessageCircle } from "lucide-react";
+import { Navigation, MessageCircle, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Place, categoryIcons } from "@/data/indianPlaces";
 import { toast } from "sonner";
@@ -48,6 +48,26 @@ const PlaceCard = ({ place, index, city, isSelected, onSelect }: PlaceCardProps)
     }
   };
 
+  const renderStars = (rating: number) => {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    const stars = [];
+
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(
+        <Star key={i} className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+      );
+    }
+
+    if (hasHalfStar) {
+      stars.push(
+        <Star key="half" className="h-3 w-3 fill-yellow-400/50 text-yellow-400" />
+      );
+    }
+
+    return stars;
+  };
+
   return (
     <button
       onClick={onSelect}
@@ -69,9 +89,17 @@ const PlaceCard = ({ place, index, city, isSelected, onSelect }: PlaceCardProps)
         </div>
         <div className="flex-1">
           <p className="font-medium">{place.name}</p>
-          <span className="text-xs text-muted-foreground">
-            {categoryIcons[place.category]} {place.category}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">
+              {categoryIcons[place.category]} {place.category}
+            </span>
+            <div className="flex items-center gap-1">
+              {renderStars(place.rating)}
+              <span className="text-xs font-medium text-yellow-600 dark:text-yellow-400">
+                {place.rating}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
       <div className="flex gap-2">

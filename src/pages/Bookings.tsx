@@ -1199,6 +1199,17 @@ const Bookings = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Validate number of guests/customers first
+    const guestsCount = parseInt(formData.guests);
+    if (!guestsCount || guestsCount < 1) {
+      toast({
+        title: "Number of Customers Required",
+        description: "Please select the number of guests/passengers before proceeding",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!formData.name || !formData.email || !formData.phone || !formData.date) {
       toast({
         title: "Missing Information",

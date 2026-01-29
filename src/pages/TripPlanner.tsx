@@ -59,6 +59,17 @@ const TripPlanner = () => {
   };
 
   const addDestination = () => {
+    // Validate number of people first
+    const peopleCount = parseInt(numberOfPeople);
+    if (!peopleCount || peopleCount < 1) {
+      toast({
+        title: "Number of Customers Required",
+        description: "Please select the number of people before adding destinations",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!newDestName || !newDestDate) {
       toast({
         title: "Missing Information",

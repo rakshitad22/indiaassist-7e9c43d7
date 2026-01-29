@@ -50,750 +50,173 @@ interface HotelData {
   images: string[];
 }
 
+// Hotel image URLs (using Unsplash for high-quality hotel photos)
+const hotelImages = {
+  luxury: [
+    "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=600&fit=crop",
+  ],
+  premium: [
+    "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=800&h=600&fit=crop",
+  ],
+  standard: [
+    "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1595576508898-0ad5c879a061?w=800&h=600&fit=crop",
+  ],
+};
+
+// Helper to get images based on star rating
+const getHotelImages = (stars: number) => {
+  if (stars >= 5) return hotelImages.luxury;
+  if (stars >= 4) return hotelImages.premium;
+  return hotelImages.standard;
+};
+
+// Helper to create hotel entry
+const createHotel = (name: string, stars: number, basePrice: number, amenities: string[]): HotelData => ({
+  name,
+  stars,
+  basePrice,
+  amenities,
+  images: getHotelImages(stars),
+});
+
 const hotelOptions: Record<string, HotelData[]> = {
   "Delhi": [
-    { 
-      name: "The Imperial", 
-      stars: 5, 
-      basePrice: 16000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "The Leela Palace", 
-      stars: 5, 
-      basePrice: 20000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Taj Palace", 
-      stars: 5, 
-      basePrice: 14000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "ITC Maurya", 
-      stars: 5, 
-      basePrice: 15000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Hyatt Regency Delhi", 
-      stars: 4, 
-      basePrice: 9000,
-      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Radisson Blu Plaza", 
-      stars: 4, 
-      basePrice: 7500,
-      amenities: ["WiFi", "Gym", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "The LaLiT New Delhi", 
-      stars: 4, 
-      basePrice: 8000,
-      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Hotel Janpath", 
-      stars: 3, 
-      basePrice: 4000,
-      amenities: ["WiFi", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
+    createHotel("The Imperial", 5, 16000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("The Leela Palace", 5, 20000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("Taj Palace", 5, 14000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("ITC Maurya", 5, 15000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("Hyatt Regency Delhi", 4, 9000, ["WiFi", "Pool", "Gym", "Restaurant"]),
+    createHotel("Radisson Blu Plaza", 4, 7500, ["WiFi", "Gym", "Restaurant"]),
+    createHotel("The LaLiT New Delhi", 4, 8000, ["WiFi", "Pool", "Gym", "Restaurant"]),
+    createHotel("Hotel Janpath", 3, 4000, ["WiFi", "Restaurant"]),
   ],
   "Mumbai": [
-    { 
-      name: "Taj Mahal Palace", 
-      stars: 5, 
-      basePrice: 15000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "The Oberoi Mumbai", 
-      stars: 5, 
-      basePrice: 18000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "ITC Maratha", 
-      stars: 5, 
-      basePrice: 12000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "JW Marriott Mumbai", 
-      stars: 5, 
-      basePrice: 14500,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Trident Nariman Point", 
-      stars: 4, 
-      basePrice: 8500,
-      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Hotel Marine Plaza", 
-      stars: 4, 
-      basePrice: 7000,
-      amenities: ["WiFi", "Gym", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Fariyas Hotel", 
-      stars: 3, 
-      basePrice: 5000,
-      amenities: ["WiFi", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Residency Hotel", 
-      stars: 3, 
-      basePrice: 4500,
-      amenities: ["WiFi", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
+    createHotel("Taj Mahal Palace", 5, 15000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("The Oberoi Mumbai", 5, 18000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("ITC Maratha", 5, 12000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("JW Marriott Mumbai", 5, 14500, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("Trident Nariman Point", 4, 8500, ["WiFi", "Pool", "Gym", "Restaurant"]),
+    createHotel("Hotel Marine Plaza", 4, 7000, ["WiFi", "Gym", "Restaurant"]),
+    createHotel("Fariyas Hotel", 3, 5000, ["WiFi", "Restaurant"]),
+    createHotel("Residency Hotel", 3, 4500, ["WiFi", "Restaurant"]),
   ],
   "Bangalore": [
-    { 
-      name: "The Oberoi", 
-      stars: 5, 
-      basePrice: 13000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "ITC Gardenia", 
-      stars: 5, 
-      basePrice: 11000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Taj West End", 
-      stars: 5, 
-      basePrice: 12000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "JW Marriott Bengaluru", 
-      stars: 5, 
-      basePrice: 13500,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "The Ritz-Carlton", 
-      stars: 5, 
-      basePrice: 14000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Shangri-La Bengaluru", 
-      stars: 4, 
-      basePrice: 8500,
-      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "The Park Bangalore", 
-      stars: 4, 
-      basePrice: 7000,
-      amenities: ["WiFi", "Gym", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Royal Orchid Central", 
-      stars: 3, 
-      basePrice: 5000,
-      amenities: ["WiFi", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
+    createHotel("The Oberoi", 5, 13000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("ITC Gardenia", 5, 11000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("Taj West End", 5, 12000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("JW Marriott Bengaluru", 5, 13500, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("The Ritz-Carlton", 5, 14000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("Shangri-La Bengaluru", 4, 8500, ["WiFi", "Pool", "Gym", "Restaurant"]),
+    createHotel("The Park Bangalore", 4, 7000, ["WiFi", "Gym", "Restaurant"]),
+    createHotel("Royal Orchid Central", 3, 5000, ["WiFi", "Restaurant"]),
   ],
   "Goa": [
-    { 
-      name: "Taj Exotica", 
-      stars: 5, 
-      basePrice: 14000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "The Leela Goa", 
-      stars: 5, 
-      basePrice: 16000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Grand Hyatt", 
-      stars: 5, 
-      basePrice: 13000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "ITC Grand Goa", 
-      stars: 5, 
-      basePrice: 12500,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Park Hyatt Goa", 
-      stars: 5, 
-      basePrice: 15000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Alila Diwa Goa", 
-      stars: 4, 
-      basePrice: 9000,
-      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Radisson Blu Resort", 
-      stars: 4, 
-      basePrice: 7500,
-      amenities: ["WiFi", "Pool", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Goa Marriott Resort", 
-      stars: 4, 
-      basePrice: 8000,
-      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Lemon Tree Amarante", 
-      stars: 3, 
-      basePrice: 5500,
-      amenities: ["WiFi", "Pool", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
+    createHotel("Taj Exotica", 5, 14000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("The Leela Goa", 5, 16000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("Grand Hyatt", 5, 13000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("ITC Grand Goa", 5, 12500, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("Park Hyatt Goa", 5, 15000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("Alila Diwa Goa", 4, 9000, ["WiFi", "Pool", "Gym", "Restaurant"]),
+    createHotel("Radisson Blu Resort", 4, 7500, ["WiFi", "Pool", "Restaurant"]),
+    createHotel("Goa Marriott Resort", 4, 8000, ["WiFi", "Pool", "Gym", "Restaurant"]),
+    createHotel("Lemon Tree Amarante", 3, 5500, ["WiFi", "Pool", "Restaurant"]),
   ],
   "Jaipur": [
-    { 
-      name: "Rambagh Palace", 
-      stars: 5, 
-      basePrice: 20000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Oberoi Rajvilas", 
-      stars: 5, 
-      basePrice: 16000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Taj Jai Mahal Palace", 
-      stars: 5, 
-      basePrice: 15000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "ITC Rajputana", 
-      stars: 5, 
-      basePrice: 12000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Hilton Jaipur", 
-      stars: 4, 
-      basePrice: 7500,
-      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Radisson Blu Jaipur", 
-      stars: 4, 
-      basePrice: 7000,
-      amenities: ["WiFi", "Gym", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Park Prime", 
-      stars: 3, 
-      basePrice: 4500,
-      amenities: ["WiFi", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Hotel Arya Niwas", 
-      stars: 3, 
-      basePrice: 3500,
-      amenities: ["WiFi", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
+    createHotel("Rambagh Palace", 5, 20000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("Oberoi Rajvilas", 5, 16000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("Taj Jai Mahal Palace", 5, 15000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("ITC Rajputana", 5, 12000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("Hilton Jaipur", 4, 7500, ["WiFi", "Pool", "Gym", "Restaurant"]),
+    createHotel("Radisson Blu Jaipur", 4, 7000, ["WiFi", "Gym", "Restaurant"]),
+    createHotel("Park Prime", 3, 4500, ["WiFi", "Restaurant"]),
+    createHotel("Hotel Arya Niwas", 3, 3500, ["WiFi", "Restaurant"]),
   ],
   "Agra": [
-    { 
-      name: "The Oberoi Amarvilas", 
-      stars: 5, 
-      basePrice: 25000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "ITC Mughal", 
-      stars: 5, 
-      basePrice: 12000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Taj Hotel & Convention Centre", 
-      stars: 5, 
-      basePrice: 14000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Courtyard by Marriott", 
-      stars: 4, 
-      basePrice: 8500,
-      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Radisson Blu Agra", 
-      stars: 4, 
-      basePrice: 7500,
-      amenities: ["WiFi", "Gym", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Howard Plaza", 
-      stars: 3, 
-      basePrice: 4000,
-      amenities: ["WiFi", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Hotel Clarks Shiraz", 
-      stars: 3, 
-      basePrice: 5000,
-      amenities: ["WiFi", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
+    createHotel("The Oberoi Amarvilas", 5, 25000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("ITC Mughal", 5, 12000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("Taj Hotel & Convention Centre", 5, 14000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("Courtyard by Marriott", 4, 8500, ["WiFi", "Pool", "Gym", "Restaurant"]),
+    createHotel("Radisson Blu Agra", 4, 7500, ["WiFi", "Gym", "Restaurant"]),
+    createHotel("Howard Plaza", 3, 4000, ["WiFi", "Restaurant"]),
+    createHotel("Hotel Clarks Shiraz", 3, 5000, ["WiFi", "Restaurant"]),
   ],
   "Hyderabad": [
-    { 
-      name: "Taj Falaknuma Palace", 
-      stars: 5, 
-      basePrice: 22000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "ITC Kohenur", 
-      stars: 5, 
-      basePrice: 13000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Taj Krishna", 
-      stars: 5, 
-      basePrice: 11000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Novotel Hyderabad", 
-      stars: 4, 
-      basePrice: 7500,
-      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Marriott Hyderabad", 
-      stars: 4, 
-      basePrice: 8500,
-      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Lemon Tree Hotel", 
-      stars: 3, 
-      basePrice: 4500,
-      amenities: ["WiFi", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
+    createHotel("Taj Falaknuma Palace", 5, 22000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("ITC Kohenur", 5, 13000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("Taj Krishna", 5, 11000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("Novotel Hyderabad", 4, 7500, ["WiFi", "Pool", "Gym", "Restaurant"]),
+    createHotel("Marriott Hyderabad", 4, 8500, ["WiFi", "Pool", "Gym", "Restaurant"]),
+    createHotel("Lemon Tree Hotel", 3, 4500, ["WiFi", "Restaurant"]),
   ],
   "Chennai": [
-    { 
-      name: "ITC Grand Chola", 
-      stars: 5, 
-      basePrice: 14000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Taj Coromandel", 
-      stars: 5, 
-      basePrice: 12000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "The Leela Palace", 
-      stars: 5, 
-      basePrice: 15000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Hyatt Regency Chennai", 
-      stars: 4, 
-      basePrice: 8000,
-      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Radisson Blu Chennai", 
-      stars: 4, 
-      basePrice: 7000,
-      amenities: ["WiFi", "Gym", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Park Plaza Chennai", 
-      stars: 3, 
-      basePrice: 5000,
-      amenities: ["WiFi", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
+    createHotel("ITC Grand Chola", 5, 14000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("Taj Coromandel", 5, 12000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("The Leela Palace", 5, 15000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("Hyatt Regency Chennai", 4, 8000, ["WiFi", "Pool", "Gym", "Restaurant"]),
+    createHotel("Radisson Blu Chennai", 4, 7000, ["WiFi", "Gym", "Restaurant"]),
+    createHotel("Park Plaza Chennai", 3, 5000, ["WiFi", "Restaurant"]),
   ],
   "Kolkata": [
-    { 
-      name: "The Oberoi Grand", 
-      stars: 5, 
-      basePrice: 13000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "ITC Sonar", 
-      stars: 5, 
-      basePrice: 11000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Taj Bengal", 
-      stars: 5, 
-      basePrice: 12000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Hyatt Regency Kolkata", 
-      stars: 4, 
-      basePrice: 7500,
-      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "The Park Kolkata", 
-      stars: 4, 
-      basePrice: 7000,
-      amenities: ["WiFi", "Gym", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Hotel Hindustan International", 
-      stars: 3, 
-      basePrice: 4500,
-      amenities: ["WiFi", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
+    createHotel("The Oberoi Grand", 5, 13000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("ITC Sonar", 5, 11000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("Taj Bengal", 5, 12000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("Hyatt Regency Kolkata", 4, 7500, ["WiFi", "Pool", "Gym", "Restaurant"]),
+    createHotel("The Park Kolkata", 4, 7000, ["WiFi", "Gym", "Restaurant"]),
+    createHotel("Hotel Hindustan International", 3, 4500, ["WiFi", "Restaurant"]),
   ],
   "Pune": [
-    { 
-      name: "JW Marriott Pune", 
-      stars: 5, 
-      basePrice: 12000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "The Westin Pune", 
-      stars: 5, 
-      basePrice: 11000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Conrad Pune", 
-      stars: 5, 
-      basePrice: 13000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Hyatt Regency Pune", 
-      stars: 4, 
-      basePrice: 8000,
-      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Radisson Blu Pune", 
-      stars: 4, 
-      basePrice: 7000,
-      amenities: ["WiFi", "Gym", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Hotel Sunderban", 
-      stars: 3, 
-      basePrice: 4000,
-      amenities: ["WiFi", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
+    createHotel("JW Marriott Pune", 5, 12000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("The Westin Pune", 5, 11000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("Conrad Pune", 5, 13000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("Hyatt Regency Pune", 4, 8000, ["WiFi", "Pool", "Gym", "Restaurant"]),
+    createHotel("Radisson Blu Pune", 4, 7000, ["WiFi", "Gym", "Restaurant"]),
+    createHotel("Hotel Sunderban", 3, 4000, ["WiFi", "Restaurant"]),
   ],
   "Udaipur": [
-    { 
-      name: "Taj Lake Palace", 
-      stars: 5, 
-      basePrice: 24000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "The Oberoi Udaivilas", 
-      stars: 5, 
-      basePrice: 26000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Taj Fateh Prakash Palace", 
-      stars: 5, 
-      basePrice: 18000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Trident Udaipur", 
-      stars: 4, 
-      basePrice: 9000,
-      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Radisson Blu Udaipur", 
-      stars: 4, 
-      basePrice: 8000,
-      amenities: ["WiFi", "Gym", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Hotel Lakend", 
-      stars: 3, 
-      basePrice: 5000,
-      amenities: ["WiFi", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
+    createHotel("Taj Lake Palace", 5, 24000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("The Oberoi Udaivilas", 5, 26000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("Taj Fateh Prakash Palace", 5, 18000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("Trident Udaipur", 4, 9000, ["WiFi", "Pool", "Gym", "Restaurant"]),
+    createHotel("Radisson Blu Udaipur", 4, 8000, ["WiFi", "Gym", "Restaurant"]),
+    createHotel("Hotel Lakend", 3, 5000, ["WiFi", "Restaurant"]),
   ],
   "Kochi": [
-    { 
-      name: "Taj Malabar Resort & Spa", 
-      stars: 5, 
-      basePrice: 12000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Crowne Plaza Kochi", 
-      stars: 5, 
-      basePrice: 10000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Grand Hyatt Kochi", 
-      stars: 5, 
-      basePrice: 13000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Le Meridien Kochi", 
-      stars: 4, 
-      basePrice: 8500,
-      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Radisson Blu Kochi", 
-      stars: 4, 
-      basePrice: 7500,
-      amenities: ["WiFi", "Gym", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Hotel Abad Plaza", 
-      stars: 3, 
-      basePrice: 4500,
-      amenities: ["WiFi", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
+    createHotel("Taj Malabar Resort & Spa", 5, 12000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("Crowne Plaza Kochi", 5, 10000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("Grand Hyatt Kochi", 5, 13000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("Le Meridien Kochi", 4, 8500, ["WiFi", "Pool", "Gym", "Restaurant"]),
+    createHotel("Radisson Blu Kochi", 4, 7500, ["WiFi", "Gym", "Restaurant"]),
+    createHotel("Hotel Abad Plaza", 3, 4500, ["WiFi", "Restaurant"]),
   ],
   "Amritsar": [
-    { 
-      name: "Taj Swarna", 
-      stars: 5, 
-      basePrice: 10000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Hyatt Regency Amritsar", 
-      stars: 5, 
-      basePrice: 11000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Radisson Blu Amritsar", 
-      stars: 4, 
-      basePrice: 7000,
-      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Holiday Inn Amritsar", 
-      stars: 4, 
-      basePrice: 6500,
-      amenities: ["WiFi", "Gym", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Hotel Sawera Grand", 
-      stars: 3, 
-      basePrice: 4000,
-      amenities: ["WiFi", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Hotel CJ International", 
-      stars: 3, 
-      basePrice: 3500,
-      amenities: ["WiFi"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
+    createHotel("Taj Swarna", 5, 10000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("Hyatt Regency Amritsar", 5, 11000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("Radisson Blu Amritsar", 4, 7000, ["WiFi", "Pool", "Gym", "Restaurant"]),
+    createHotel("Holiday Inn Amritsar", 4, 6500, ["WiFi", "Gym", "Restaurant"]),
+    createHotel("Hotel Sawera Grand", 3, 4000, ["WiFi", "Restaurant"]),
+    createHotel("Hotel CJ International", 3, 3500, ["WiFi"]),
   ],
   "Varanasi": [
-    { 
-      name: "Taj Ganges", 
-      stars: 5, 
-      basePrice: 10000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Radisson Hotel Varanasi", 
-      stars: 5, 
-      basePrice: 9000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Hotel Surya", 
-      stars: 4, 
-      basePrice: 6500,
-      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Rivatas by Ideal", 
-      stars: 4, 
-      basePrice: 7000,
-      amenities: ["WiFi", "Gym", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Hotel Meraden Grand", 
-      stars: 3, 
-      basePrice: 4500,
-      amenities: ["WiFi", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Hotel Ganges View", 
-      stars: 3, 
-      basePrice: 4000,
-      amenities: ["WiFi", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
+    createHotel("Taj Ganges", 5, 10000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("Radisson Hotel Varanasi", 5, 9000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("Hotel Surya", 4, 6500, ["WiFi", "Pool", "Gym", "Restaurant"]),
+    createHotel("Rivatas by Ideal", 4, 7000, ["WiFi", "Gym", "Restaurant"]),
+    createHotel("Hotel Meraden Grand", 3, 4500, ["WiFi", "Restaurant"]),
+    createHotel("Hotel Ganges View", 3, 4000, ["WiFi", "Restaurant"]),
   ],
   "Mysore": [
-    { 
-      name: "Lalitha Mahal Palace", 
-      stars: 5, 
-      basePrice: 12000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "The Windflower Resort", 
-      stars: 5, 
-      basePrice: 10000,
-      amenities: ["WiFi", "Pool", "Gym", "Spa", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Radisson Blu Mysore", 
-      stars: 4, 
-      basePrice: 7500,
-      amenities: ["WiFi", "Pool", "Gym", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Royal Orchid Metropole", 
-      stars: 4, 
-      basePrice: 7000,
-      amenities: ["WiFi", "Gym", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Hotel Sandesh The Prince", 
-      stars: 3, 
-      basePrice: 4500,
-      amenities: ["WiFi", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
-    { 
-      name: "Hotel Pai Vista", 
-      stars: 3, 
-      basePrice: 4000,
-      amenities: ["WiFi", "Restaurant"],
-      images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"]
-    },
+    createHotel("Lalitha Mahal Palace", 5, 12000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("The Windflower Resort", 5, 10000, ["WiFi", "Pool", "Gym", "Spa", "Restaurant"]),
+    createHotel("Radisson Blu Mysore", 4, 7500, ["WiFi", "Pool", "Gym", "Restaurant"]),
+    createHotel("Royal Orchid Metropole", 4, 7000, ["WiFi", "Gym", "Restaurant"]),
+    createHotel("Hotel Sandesh The Prince", 3, 4500, ["WiFi", "Restaurant"]),
+    createHotel("Hotel Pai Vista", 3, 4000, ["WiFi", "Restaurant"]),
   ],
 };
 
@@ -805,11 +228,16 @@ const amenityIcons = {
   Restaurant: Utensils,
 };
 
-const cabTypes = [
-  { type: "Mini", basePrice: 10, capacity: 4 },
-  { type: "Sedan", basePrice: 15, capacity: 4 },
-  { type: "SUV", basePrice: 20, capacity: 6 },
-  { type: "Luxury", basePrice: 35, capacity: 4 },
+const vehicleTypes = [
+  { type: "Mini", basePrice: 10, capacity: 4, category: "cab" },
+  { type: "Sedan", basePrice: 15, capacity: 4, category: "cab" },
+  { type: "SUV", basePrice: 20, capacity: 6, category: "cab" },
+  { type: "Luxury", basePrice: 35, capacity: 4, category: "cab" },
+  { type: "Tempo Traveller", basePrice: 25, capacity: 12, category: "bus" },
+  { type: "Mini Bus", basePrice: 40, capacity: 20, category: "bus" },
+  { type: "Coach Bus", basePrice: 55, capacity: 40, category: "bus" },
+  { type: "Luxury Coach", basePrice: 75, capacity: 45, category: "bus" },
+  { type: "Sleeper Bus", basePrice: 65, capacity: 30, category: "bus" },
 ];
 
 const flightClasses = {
@@ -1199,11 +627,11 @@ const Bookings = () => {
   };
 
   const calculateCabCost = () => {
-    const cab = cabTypes.find(c => c.type === formData.cabType) || cabTypes[0];
+    const vehicle = vehicleTypes.find(v => v.type === formData.cabType) || vehicleTypes[0];
     const distance = parseInt(formData.distance) || 10;
-    const baseFare = cab.basePrice * distance;
+    const baseFare = vehicle.basePrice * distance;
     const taxes = Math.round(baseFare * 0.05);
-    return { fare: baseFare, taxes, total: baseFare + taxes, cab };
+    return { fare: baseFare, taxes, total: baseFare + taxes, cab: vehicle };
   };
 
   const calculateFlightCost = () => {
@@ -1631,15 +1059,22 @@ For support: support@indiaassist.com | +91 1800-123-4567
                 {bookingType === "cab" && (
                   <>
                     <div className="space-y-2">
-                      <Label htmlFor="cabType">Cab Type *</Label>
+                      <Label htmlFor="cabType">Vehicle Type *</Label>
                       <Select value={formData.cabType} onValueChange={(value) => setFormData({ ...formData, cabType: value })}>
                         <SelectTrigger id="cabType">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          {cabTypes.map((cab) => (
-                            <SelectItem key={cab.type} value={cab.type}>
-                              {cab.type} - ₹{cab.basePrice}/km (Capacity: {cab.capacity})
+                          <div className="px-2 py-1.5 text-sm font-semibold text-muted-foreground">🚗 Cabs</div>
+                          {vehicleTypes.filter(v => v.category === "cab").map((vehicle) => (
+                            <SelectItem key={vehicle.type} value={vehicle.type}>
+                              {vehicle.type} - ₹{vehicle.basePrice}/km (Capacity: {vehicle.capacity})
+                            </SelectItem>
+                          ))}
+                          <div className="px-2 py-1.5 text-sm font-semibold text-muted-foreground border-t mt-1 pt-2">🚌 Buses</div>
+                          {vehicleTypes.filter(v => v.category === "bus").map((vehicle) => (
+                            <SelectItem key={vehicle.type} value={vehicle.type}>
+                              {vehicle.type} - ₹{vehicle.basePrice}/km (Capacity: {vehicle.capacity})
                             </SelectItem>
                           ))}
                         </SelectContent>

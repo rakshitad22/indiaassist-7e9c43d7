@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -220,29 +221,39 @@ const Destinations = () => {
 
         <div className="space-y-12">
           {destinations.map((destination, index) => (
-            <Card key={index} className="overflow-hidden shadow-card hover:shadow-lg-custom transition-smooth">
-              <div className="grid md:grid-cols-2 gap-6">
-                {/* Image */}
-                <div className="h-64 md:h-auto relative overflow-hidden">
-                  <img
-                    src={destination.image}
-                    alt={destination.name}
-                    className="w-full h-full object-cover hover:scale-105 transition-smooth"
-                  />
-                  <div className="absolute top-4 left-4">
-                    <Badge className="bg-saffron text-white">
-                      <MapPin className="h-3 w-3 mr-1" />
-                      {destination.location}
-                    </Badge>
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              whileHover={{ scale: 1.01, y: -4 }}
+            >
+              <Card className="overflow-hidden shadow-card hover:shadow-lg-custom transition-all duration-300 hover:border-primary/30">
+                <div className="grid md:grid-cols-2 gap-6">
+                  {/* Image */}
+                  <div className="h-64 md:h-auto relative overflow-hidden group">
+                    <motion.img
+                      src={destination.image}
+                      alt={destination.name}
+                      className="w-full h-full object-cover"
+                      whileHover={{ scale: 1.1 }}
+                      transition={{ duration: 0.6, ease: "easeOut" }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute top-4 left-4">
+                      <Badge className="bg-saffron text-white">
+                        <MapPin className="h-3 w-3 mr-1" />
+                        {destination.location}
+                      </Badge>
+                    </div>
                   </div>
-                </div>
 
                 {/* Content */}
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between mb-3">
                     <h2 className="text-3xl font-bold">{destination.name}</h2>
                     <div className="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-lg">
-                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <Star className="h-4 w-4 fill-golden text-golden" />
                       <span className="font-semibold text-sm">{destination.rating}</span>
                     </div>
                   </div>
@@ -283,16 +294,19 @@ const Destinations = () => {
                   </div>
 
                   {/* View Details Button */}
-                  <Button 
-                    onClick={() => handleViewDetails(destination)}
-                    className="w-full md:w-auto"
-                  >
-                    <Eye className="h-4 w-4 mr-2" />
-                    View Complete Details
-                  </Button>
+                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                    <Button 
+                      onClick={() => handleViewDetails(destination)}
+                      className="w-full md:w-auto transition-all duration-300 hover:shadow-md"
+                    >
+                      <Eye className="h-4 w-4 mr-2" />
+                      View Complete Details
+                    </Button>
+                  </motion.div>
                 </CardContent>
               </div>
             </Card>
+          </motion.div>
           ))}
         </div>
       </div>

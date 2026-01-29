@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -1533,23 +1534,30 @@ For support: support@indiaassist.com | +91 1800-123-4567
                       <div className="space-y-3">
                         <Label>Available Hotels ({filteredHotels.length})</Label>
                         <div className="grid gap-4 max-h-[500px] overflow-y-auto pr-2">
-                          {filteredHotels.map((hotel) => (
-                            <Card 
+                          {filteredHotels.map((hotel, index) => (
+                            <motion.div
                               key={hotel.name}
-                              className={`cursor-pointer transition-all hover:shadow-md ${
-                                formData.hotel === hotel.name ? 'ring-2 ring-primary' : ''
-                              }`}
-                              onClick={() => {
-                                setFormData({ ...formData, hotel: hotel.name, destination: selectedCity });
-                              }}
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.3, delay: index * 0.05 }}
+                              whileHover={{ scale: 1.02, y: -2 }}
+                              whileTap={{ scale: 0.98 }}
                             >
-                              <CardContent className="p-4">
+                              <Card 
+                                className={`cursor-pointer transition-all hover:shadow-lg ${
+                                  formData.hotel === hotel.name ? 'ring-2 ring-primary shadow-lg' : ''
+                                }`}
+                                onClick={() => {
+                                  setFormData({ ...formData, hotel: hotel.name, destination: selectedCity });
+                                }}
+                              >
+                                <CardContent className="p-4">
                                 <div className="flex justify-between items-start mb-3">
                                   <div>
                                     <h4 className="font-semibold text-lg">{hotel.name}</h4>
                                     <div className="flex items-center gap-1 mt-1">
                                       {Array.from({ length: hotel.stars }).map((_, i) => (
-                                        <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                                        <Star key={i} className="h-4 w-4 fill-golden text-golden" />
                                       ))}
                                     </div>
                                   </div>
@@ -1590,6 +1598,7 @@ For support: support@indiaassist.com | +91 1800-123-4567
                                 </Button>
                               </CardContent>
                             </Card>
+                          </motion.div>
                           ))}
                         </div>
                       </div>
@@ -1765,54 +1774,62 @@ For support: support@indiaassist.com | +91 1800-123-4567
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <Label className="text-lg font-semibold">Live Hotel Results ({realHotels.length})</Label>
-                      <Badge variant="secondary" className="bg-green-100 text-green-800">
+                      <Badge variant="secondary" className="bg-emerald/10 text-emerald">
                         Real-time from Amadeus
                       </Badge>
                     </div>
                     <div className="grid gap-4 max-h-[400px] overflow-y-auto pr-2">
-                      {realHotels.map((hotel) => (
-                        <Card 
+                      {realHotels.map((hotel, index) => (
+                        <motion.div
                           key={hotel.id}
-                          className={`cursor-pointer transition-all hover:shadow-md ${
-                            selectedRealHotel?.id === hotel.id ? 'ring-2 ring-primary' : ''
-                          }`}
-                          onClick={() => selectRealHotel(hotel)}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.3, delay: index * 0.05 }}
+                          whileHover={{ scale: 1.02, y: -2 }}
+                          whileTap={{ scale: 0.98 }}
                         >
-                          <CardContent className="p-4">
-                            <div className="flex justify-between items-start mb-2">
-                              <div>
-                                <h4 className="font-semibold text-lg">{hotel.name}</h4>
-                                <p className="text-sm text-muted-foreground">{hotel.address}</p>
-                                <div className="flex items-center gap-1 mt-1">
-                                  {Array.from({ length: Math.round(hotel.rating) }).map((_, i) => (
-                                    <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                                  ))}
+                          <Card 
+                            className={`cursor-pointer transition-all hover:shadow-lg ${
+                              selectedRealHotel?.id === hotel.id ? 'ring-2 ring-primary shadow-lg' : ''
+                            }`}
+                            onClick={() => selectRealHotel(hotel)}
+                          >
+                            <CardContent className="p-4">
+                              <div className="flex justify-between items-start mb-2">
+                                <div>
+                                  <h4 className="font-semibold text-lg">{hotel.name}</h4>
+                                  <p className="text-sm text-muted-foreground">{hotel.address}</p>
+                                  <div className="flex items-center gap-1 mt-1">
+                                    {Array.from({ length: Math.round(hotel.rating) }).map((_, i) => (
+                                      <Star key={i} className="h-4 w-4 fill-golden text-golden" />
+                                    ))}
+                                  </div>
+                                </div>
+                                <div className="text-right">
+                                  <p className="text-2xl font-bold text-primary">
+                                    {hotel.currency} {hotel.price.toLocaleString()}
+                                  </p>
+                                  <p className="text-sm text-muted-foreground">{hotel.roomType}</p>
+                                  {hotel.isRealBooking && (
+                                    <Badge className="mt-1 bg-emerald text-emerald-foreground">Live</Badge>
+                                  )}
                                 </div>
                               </div>
-                              <div className="text-right">
-                                <p className="text-2xl font-bold text-primary">
-                                  {hotel.currency} {hotel.price.toLocaleString()}
-                                </p>
-                                <p className="text-sm text-muted-foreground">{hotel.roomType}</p>
-                                {hotel.isRealBooking && (
-                                  <Badge className="mt-1 bg-green-500">Live</Badge>
-                                )}
-                              </div>
-                            </div>
-                            {hotel.description && (
-                              <p className="text-sm text-muted-foreground mt-2">{hotel.description}</p>
-                            )}
-                            {hotel.amenities.length > 0 && (
-                              <div className="flex flex-wrap gap-1 mt-2">
-                                {hotel.amenities.slice(0, 5).map((amenity) => (
-                                  <Badge key={amenity} variant="outline" className="text-xs">
-                                    {amenity}
-                                  </Badge>
-                                ))}
-                              </div>
-                            )}
-                          </CardContent>
-                        </Card>
+                              {hotel.description && (
+                                <p className="text-sm text-muted-foreground mt-2">{hotel.description}</p>
+                              )}
+                              {hotel.amenities.length > 0 && (
+                                <div className="flex flex-wrap gap-1 mt-2">
+                                  {hotel.amenities.slice(0, 5).map((amenity) => (
+                                    <Badge key={amenity} variant="outline" className="text-xs">
+                                      {amenity}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              )}
+                            </CardContent>
+                          </Card>
+                        </motion.div>
                       ))}
                     </div>
                   </div>
@@ -1823,35 +1840,42 @@ For support: support@indiaassist.com | +91 1800-123-4567
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <Label className="text-lg font-semibold">Live Flight Results ({realFlights.length})</Label>
-                      <Badge variant="secondary" className="bg-green-100 text-green-800">
+                      <Badge variant="secondary" className="bg-emerald/10 text-emerald">
                         Real-time from Amadeus
                       </Badge>
                     </div>
                     <div className="grid gap-4 max-h-[400px] overflow-y-auto pr-2">
-                      {realFlights.map((flight) => (
-                        <Card 
+                      {realFlights.map((flight, index) => (
+                        <motion.div
                           key={flight.id}
-                          className={`cursor-pointer transition-all hover:shadow-md ${
-                            selectedRealFlight?.id === flight.id ? 'ring-2 ring-primary' : ''
-                          }`}
-                          onClick={() => selectRealFlight(flight)}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.3, delay: index * 0.05 }}
+                          whileHover={{ scale: 1.02, y: -2 }}
+                          whileTap={{ scale: 0.98 }}
                         >
-                          <CardContent className="p-4">
-                            <div className="flex justify-between items-start mb-3">
-                              <div>
-                                <h4 className="font-semibold text-lg">{flight.airline}</h4>
-                                <Badge variant="outline">{flight.travelClass}</Badge>
-                              </div>
-                              <div className="text-right">
-                                <p className="text-2xl font-bold text-primary">
-                                  {flight.currency} {flight.price.toLocaleString()}
-                                </p>
-                                <p className="text-sm text-muted-foreground">
-                                  {flight.seatsAvailable} seats left
-                                </p>
-                                {flight.isRealBooking && (
-                                  <Badge className="mt-1 bg-green-500">Live</Badge>
-                                )}
+                          <Card 
+                            className={`cursor-pointer transition-all hover:shadow-lg ${
+                              selectedRealFlight?.id === flight.id ? 'ring-2 ring-primary shadow-lg' : ''
+                            }`}
+                            onClick={() => selectRealFlight(flight)}
+                          >
+                            <CardContent className="p-4">
+                              <div className="flex justify-between items-start mb-3">
+                                <div>
+                                  <h4 className="font-semibold text-lg">{flight.airline}</h4>
+                                  <Badge variant="outline">{flight.travelClass}</Badge>
+                                </div>
+                                <div className="text-right">
+                                  <p className="text-2xl font-bold text-primary">
+                                    {flight.currency} {flight.price.toLocaleString()}
+                                  </p>
+                                  <p className="text-sm text-muted-foreground">
+                                    {flight.seatsAvailable} seats left
+                                  </p>
+                                  {flight.isRealBooking && (
+                                    <Badge className="mt-1 bg-emerald text-emerald-foreground">Live</Badge>
+                                  )}
                               </div>
                             </div>
                             
@@ -1914,6 +1938,7 @@ For support: support@indiaassist.com | +91 1800-123-4567
                             )}
                           </CardContent>
                         </Card>
+                      </motion.div>
                       ))}
                     </div>
                   </div>
@@ -2046,8 +2071,8 @@ For support: support@indiaassist.com | +91 1800-123-4567
           <DialogContent className="max-w-2xl">
             <DialogHeader>
               <div className="flex items-center justify-center mb-4">
-                <div className="h-16 w-16 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center animate-scale-in">
-                  <CheckCircle className="h-10 w-10 text-green-600 dark:text-green-400" />
+                <div className="h-16 w-16 rounded-full bg-emerald/10 dark:bg-emerald/20 flex items-center justify-center animate-scale-in">
+                  <CheckCircle className="h-10 w-10 text-emerald dark:text-emerald" />
                 </div>
               </div>
               <DialogTitle className="text-center text-2xl">Booking Confirmed! 🎉</DialogTitle>
@@ -2137,8 +2162,8 @@ For support: support@indiaassist.com | +91 1800-123-4567
                     </div>
                   </CardContent>
                 </Card>
-                <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg">
-                  <p className="text-sm text-center">
+                <div className="bg-primary/5 dark:bg-primary/10 p-4 rounded-lg border border-primary/20">
+                  <p className="text-sm text-center text-muted-foreground">
                     ℹ️ This is a demo booking. No actual reservation has been made. You can download your receipt or proceed to payment below.
                   </p>
                 </div>

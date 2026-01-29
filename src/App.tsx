@@ -7,6 +7,7 @@ import Navigation from "./components/Navigation";
 import { LanguageProvider } from "./components/LanguageTranslator";
 import { AuthProvider } from "./hooks/useAuth";
 import { ThemeProvider } from "./components/ThemeProvider";
+import { PageTransition } from "./components/PageTransition";
 import TravelAssistant from "./components/TravelAssistant";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
@@ -30,37 +31,45 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    <ThemeProvider 
+      attribute="class" 
+      defaultTheme="system" 
+      enableSystem 
+      storageKey="india-assist-theme"
+      disableTransitionOnChange={false}
+    >
       <TooltipProvider>
         <AuthProvider>
           <LanguageProvider>
             <Toaster />
             <Sonner />
           <BrowserRouter>
-            <div className="min-h-screen flex flex-col">
+            <div className="min-h-screen flex flex-col theme-transition">
               <Navigation />
               <main className="flex-1">
-                <Routes>
-                  <Route path="/auth" element={<Auth />} />
-                  <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-                  <Route path="/destinations" element={<ProtectedRoute><Destinations /></ProtectedRoute>} />
-                  <Route path="/maps" element={<ProtectedRoute><Maps /></ProtectedRoute>} />
-                  <Route path="/blog" element={<ProtectedRoute><Blog /></ProtectedRoute>} />
-                  <Route path="/trip-planner" element={<ProtectedRoute><TripPlanner /></ProtectedRoute>} />
-                  <Route path="/currency" element={<ProtectedRoute><Currency /></ProtectedRoute>} />
-                  <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
-                  <Route path="/bookings" element={<ProtectedRoute><Bookings /></ProtectedRoute>} />
-                  <Route path="/emergency" element={<ProtectedRoute><Emergency /></ProtectedRoute>} />
-                  <Route path="/contact" element={<ProtectedRoute><Contact /></ProtectedRoute>} />
-                  <Route path="/blog/:id" element={<ProtectedRoute><BlogPost /></ProtectedRoute>} />
-                  <Route path="/translator" element={<ProtectedRoute><UniversalTranslator /></ProtectedRoute>} />
-                  <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-                  <Route path="/notifications" element={<ProtectedRoute><NotificationPreferences /></ProtectedRoute>} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
+                <PageTransition>
+                  <Routes>
+                    <Route path="/auth" element={<Auth />} />
+                    <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+                    <Route path="/destinations" element={<ProtectedRoute><Destinations /></ProtectedRoute>} />
+                    <Route path="/maps" element={<ProtectedRoute><Maps /></ProtectedRoute>} />
+                    <Route path="/blog" element={<ProtectedRoute><Blog /></ProtectedRoute>} />
+                    <Route path="/trip-planner" element={<ProtectedRoute><TripPlanner /></ProtectedRoute>} />
+                    <Route path="/currency" element={<ProtectedRoute><Currency /></ProtectedRoute>} />
+                    <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
+                    <Route path="/bookings" element={<ProtectedRoute><Bookings /></ProtectedRoute>} />
+                    <Route path="/emergency" element={<ProtectedRoute><Emergency /></ProtectedRoute>} />
+                    <Route path="/contact" element={<ProtectedRoute><Contact /></ProtectedRoute>} />
+                    <Route path="/blog/:id" element={<ProtectedRoute><BlogPost /></ProtectedRoute>} />
+                    <Route path="/translator" element={<ProtectedRoute><UniversalTranslator /></ProtectedRoute>} />
+                    <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+                    <Route path="/notifications" element={<ProtectedRoute><NotificationPreferences /></ProtectedRoute>} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </PageTransition>
               </main>
               <TravelAssistant />
-              <footer className="bg-muted/30 border-t py-8 mt-12">
+              <footer className="bg-muted/30 border-t py-8 mt-12 theme-transition">
                 <div className="container mx-auto px-4 text-center text-muted-foreground">
                   <p className="mb-2">© 2025 India Assist - Your Smart Travel Companion</p>
                   <p className="text-sm">Made with ❤️ for travelers exploring Incredible India</p>

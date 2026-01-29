@@ -1919,41 +1919,54 @@ For support: support@indiaassist.com | +91 1800-123-4567
                   </div>
                 )}
 
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="guests">
-                      <Users className="h-4 w-4 inline mr-1" />
-                      Number of {bookingType === "hotel" ? "Guests" : "Passengers"}
-                    </Label>
-                    <Select value={formData.guests} onValueChange={(value) => setFormData({ ...formData, guests: value })}>
-                      <SelectTrigger id="guests">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {[1, 2, 3, 4, 5, 6, 7, 8, 10].map((num) => (
-                          <SelectItem key={num} value={num.toString()}>
-                            {num} {num === 1 ? (bookingType === "hotel" ? "Guest" : "Passenger") : (bookingType === "hotel" ? "Guests" : "Passengers")}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                {/* Number of Guests/Passengers - Prominent Input Box */}
+                <Card className="border-2 border-primary/30 bg-primary/5">
+                  <CardContent className="pt-6">
+                    <div className="space-y-3">
+                      <Label htmlFor="guests" className="text-lg font-semibold flex items-center gap-2">
+                        <Users className="h-5 w-5 text-primary" />
+                        Enter Number of {bookingType === "hotel" ? "Guests" : "Passengers"} *
+                      </Label>
+                      <p className="text-sm text-muted-foreground">
+                        Please enter the total number of people (required for accurate budget calculation)
+                      </p>
+                      <Input
+                        id="guests"
+                        type="number"
+                        min="1"
+                        max="100"
+                        placeholder={`Enter number of ${bookingType === "hotel" ? "guests" : "passengers"} (1-100)`}
+                        value={formData.guests}
+                        onChange={(e) => {
+                          const value = Math.min(100, Math.max(0, parseInt(e.target.value) || 0));
+                          setFormData({ ...formData, guests: value.toString() });
+                        }}
+                        className="text-lg h-12 font-semibold"
+                        required
+                      />
+                      {parseInt(formData.guests) > 0 && (
+                        <p className="text-sm text-primary font-medium">
+                          ✓ {formData.guests} {parseInt(formData.guests) === 1 ? (bookingType === "hotel" ? "guest" : "passenger") : (bookingType === "hotel" ? "guests" : "passengers")} selected
+                        </p>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="budgetClass">
-                      Budget Category
-                    </Label>
-                    <Select value={formData.budgetClass} onValueChange={(value) => setFormData({ ...formData, budgetClass: value })}>
-                      <SelectTrigger id="budgetClass">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="budget">💰 Budget Traveler (Economy options)</SelectItem>
-                        <SelectItem value="middle">🏨 Mid-Range (Comfort & value)</SelectItem>
-                        <SelectItem value="luxury">👑 Luxury (Premium experience)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="budgetClass">
+                    Budget Category
+                  </Label>
+                  <Select value={formData.budgetClass} onValueChange={(value) => setFormData({ ...formData, budgetClass: value })}>
+                    <SelectTrigger id="budgetClass">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="budget">💰 Budget Traveler (Economy options)</SelectItem>
+                      <SelectItem value="middle">🏨 Mid-Range (Comfort & value)</SelectItem>
+                      <SelectItem value="luxury">👑 Luxury (Premium experience)</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 {/* Cost Estimate */}

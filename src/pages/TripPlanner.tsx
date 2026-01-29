@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Calendar, MapPin, Plus, Trash2, Save, CheckCircle2, IndianRupee } from "lucide-react";
+import { Calendar, MapPin, Plus, Trash2, Save, CheckCircle2, IndianRupee, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -198,6 +198,42 @@ const TripPlanner = () => {
             </div>
           )}
 
+          {/* Number of Customers - Prominent Input Box */}
+          <Card className="mb-6 shadow-card border-2 border-primary/30 bg-primary/5">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5 text-primary" />
+                Enter Number of Customers *
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <p className="text-sm text-muted-foreground">
+                  Please enter the total number of people for your trip (required for accurate budget calculation)
+                </p>
+                <Input
+                  id="people"
+                  type="number"
+                  min="1"
+                  max="100"
+                  placeholder="Enter number of customers (1-100)"
+                  value={numberOfPeople}
+                  onChange={(e) => {
+                    const value = Math.min(100, Math.max(0, parseInt(e.target.value) || 0));
+                    setNumberOfPeople(value.toString());
+                  }}
+                  className="text-lg h-12 font-semibold"
+                  required
+                />
+                {parseInt(numberOfPeople) > 0 && (
+                  <p className="text-sm text-primary font-medium">
+                    ✓ {numberOfPeople} {parseInt(numberOfPeople) === 1 ? "person" : "people"} selected
+                  </p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Trip Details */}
           <Card className="mb-6 shadow-card">
             <CardHeader>
@@ -213,7 +249,7 @@ const TripPlanner = () => {
                   onChange={(e) => setTripName(e.target.value)}
                 />
               </div>
-              <div className="grid md:grid-cols-3 gap-4">
+              <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="days">Number of Days</Label>
                   <Select value={numberOfDays} onValueChange={setNumberOfDays}>
@@ -224,21 +260,6 @@ const TripPlanner = () => {
                       {[1, 2, 3, 4, 5, 6, 7, 10, 14].map((num) => (
                         <SelectItem key={num} value={num.toString()}>
                           {num} {num === 1 ? "Day" : "Days"}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="people">Number of People</Label>
-                  <Select value={numberOfPeople} onValueChange={setNumberOfPeople}>
-                    <SelectTrigger id="people">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {[1, 2, 3, 4, 5, 6, 8, 10].map((num) => (
-                        <SelectItem key={num} value={num.toString()}>
-                          {num} {num === 1 ? "Person" : "People"}
                         </SelectItem>
                       ))}
                     </SelectContent>

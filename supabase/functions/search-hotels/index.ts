@@ -114,7 +114,16 @@ serve(async (req) => {
       );
     }
 
-    const token = await getAccessToken();
+    let token: string;
+    try {
+      token = await getAccessToken();
+    } catch (authError) {
+      console.log('Auth failed, using mock data:', authError);
+      return new Response(
+        JSON.stringify({ hotels: getMockHotels(cityName), source: 'demo' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     // Search for hotels by city
     const hotelListResponse = await fetch(
@@ -130,7 +139,7 @@ serve(async (req) => {
       const error = await hotelListResponse.text();
       console.error('Hotel list error:', error);
       return new Response(
-        JSON.stringify({ hotels: getMockHotels(cityName) }),
+        JSON.stringify({ hotels: getMockHotels(cityName), source: 'demo' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }

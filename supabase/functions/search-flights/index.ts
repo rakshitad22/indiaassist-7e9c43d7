@@ -94,7 +94,17 @@ serve(async (req) => {
     const originCode = cityToIataCode[origin.toLowerCase()] || origin.toUpperCase();
     const destCode = cityToIataCode[destination.toLowerCase()] || destination.toUpperCase();
 
-    const token = await getAccessToken();
+    let token: string;
+    try {
+      token = await getAccessToken();
+    } catch (authError) {
+      console.log('Auth failed, using mock data:', authError);
+      return new Response(
+        JSON.stringify({ flights: getMockFlights(origin, destination, departureDate), source: 'demo' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
 
     const searchParams = new URLSearchParams({
       originLocationCode: originCode,

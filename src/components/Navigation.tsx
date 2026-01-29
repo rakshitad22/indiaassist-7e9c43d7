@@ -44,13 +44,13 @@ const Navigation = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b shadow-sm">
+    <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b shadow-sm theme-transition">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 font-bold text-xl">
-            <MapPin className="h-6 w-6 text-primary" />
-            <span className="text-gradient">India Assist</span>
+          <Link to="/" className="flex items-center gap-2 font-bold text-xl group">
+            <MapPin className="h-6 w-6 text-primary transition-transform duration-300 group-hover:scale-110" />
+            <span className="text-gradient transition-all duration-300 group-hover:tracking-wide">India Assist</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -118,13 +118,14 @@ const Navigation = () => {
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <div className="md:hidden py-4 border-t">
+          <div className="md:hidden py-4 border-t animate-slide-up">
             <div className="flex flex-col gap-2">
-              {links.map((link) => (
+              {links.map((link, index) => (
                 <Link key={link.to} to={link.to} onClick={() => setIsOpen(false)}>
                   <Button
                     variant={isActive(link.to) ? "default" : "ghost"}
-                    className="w-full justify-start transition-smooth"
+                    className="w-full justify-start transition-all duration-300 hover:translate-x-1"
+                    style={{ animationDelay: `${index * 50}ms` }}
                   >
                     {link.label}
                   </Button>

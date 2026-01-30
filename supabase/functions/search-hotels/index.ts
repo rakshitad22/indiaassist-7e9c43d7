@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { authenticateRequest, corsHeaders, unauthorizedResponse, badRequestResponse } from "../_shared/auth.ts";
+import { authenticateRequest, corsHeaders, unauthorizedResponse, badRequestResponse, internalErrorResponse } from "../_shared/auth.ts";
 import { validateHotelSearchRequest } from "../_shared/validation.ts";
 
 const AMADEUS_API_KEY = Deno.env.get('AMADEUS_API_KEY');
@@ -106,12 +106,9 @@ serve(async (req) => {
     console.log('Search request:', { cityName, checkInDate, checkOutDate, adults, rooms, userId: auth.userId });
 
     if (!AMADEUS_API_KEY || !AMADEUS_API_SECRET) {
-      console.error('Amadeus API credentials not configured');
+      // Return mock data gracefully when API not configured
       return new Response(
-        JSON.stringify({ 
-          error: 'Hotel booking API not configured',
-          hotels: getMockHotels(cityName)
-        }),
+        JSON.stringify({ hotels: getMockHotels(cityName), source: 'demo' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -208,18 +205,7 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('Search hotels error:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    return new Response(
-      JSON.stringify({ 
-        error: errorMessage,
-        hotels: getMockHotels('') 
-      }),
-      { 
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-      }
-    );
+    return internalErrorResponse(error, "SEARCH_HOTELS");
   }
 });
 

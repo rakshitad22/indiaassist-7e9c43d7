@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { authenticateRequest, corsHeaders, unauthorizedResponse, badRequestResponse } from "../_shared/auth.ts";
+import { authenticateRequest, corsHeaders, unauthorizedResponse, badRequestResponse, internalErrorResponse, serviceUnavailableResponse } from "../_shared/auth.ts";
 import { validateSmsRequest, sanitizeString } from "../_shared/validation.ts";
 
 const handler = async (req: Request): Promise<Response> => {
@@ -30,7 +30,7 @@ const handler = async (req: Request): Promise<Response> => {
     const twilioPhoneNumber = Deno.env.get("TWILIO_PHONE_NUMBER");
 
     if (!accountSid || !authToken || !twilioPhoneNumber) {
-      throw new Error("Twilio credentials not configured");
+      return serviceUnavailableResponse("SMS");
     }
 
     // Sanitize booking details for message
@@ -74,8 +74,7 @@ const handler = async (req: Request): Promise<Response> => {
     const result = await response.json();
 
     if (!response.ok) {
-      console.error("Twilio API error:", result);
-      throw new Error(result.message || "Failed to send SMS");
+      return internalErrorResponse(new Error("SMS delivery failed"), "SMS");
     }
 
     console.log("SMS sent successfully:", result.sid);
@@ -87,15 +86,8 @@ const handler = async (req: Request): Promise<Response> => {
         ...corsHeaders,
       },
     });
-  } catch (error: any) {
-    console.error("Error in send-booking-sms function:", error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      }
-    );
+  } catch (error) {
+    return internalErrorResponse(error, "SMS");
   }
 };
 

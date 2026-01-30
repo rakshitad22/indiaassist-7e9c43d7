@@ -1,10 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { Resend } from "https://esm.sh/resend@2.0.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { authenticateRequest, corsHeaders, unauthorizedResponse, badRequestResponse } from "../_shared/auth.ts";
+import { authenticateRequest, corsHeaders, unauthorizedResponse, badRequestResponse, internalErrorResponse, serviceUnavailableResponse } from "../_shared/auth.ts";
 import { validateBookingEmailRequest } from "../_shared/validation.ts";
-
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
 // Generate rich HTML email template
 function generateBookingEmailHtml(booking: {
@@ -188,7 +186,12 @@ const handler = async (req: Request): Promise<Response> => {
     
     const booking = validation.data!;
     
-    console.log("Processing email request for:", booking.email, "type:", booking.notificationType, "user:", auth.userId);
+    const resendKey = Deno.env.get("RESEND_API_KEY");
+    if (!resendKey) {
+      return serviceUnavailableResponse("EMAIL");
+    }
+    
+    const resend = new Resend(resendKey);
 
     // Verify the user is sending email to their own address (or use their own userId)
     const userId = booking.userId || auth.userId;
@@ -251,12 +254,8 @@ const handler = async (req: Request): Promise<Response> => {
       status: 200,
       headers: { "Content-Type": "application/json", ...corsHeaders },
     });
-  } catch (error: any) {
-    console.error("Error in send-booking-email:", error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
-    );
+  } catch (error) {
+    return internalErrorResponse(error, "EMAIL");
   }
 };
 

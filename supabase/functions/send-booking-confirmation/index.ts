@@ -1,9 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { Resend } from "https://esm.sh/resend@2.0.0";
-import { authenticateRequest, corsHeaders, unauthorizedResponse, badRequestResponse } from "../_shared/auth.ts";
+import { authenticateRequest, corsHeaders, unauthorizedResponse, badRequestResponse, internalErrorResponse, serviceUnavailableResponse } from "../_shared/auth.ts";
 import { validateBookingEmailRequest } from "../_shared/validation.ts";
-
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
 const handler = async (req: Request): Promise<Response> => {
   // Handle CORS preflight requests
@@ -28,12 +26,17 @@ const handler = async (req: Request): Promise<Response> => {
     
     const booking = validation.data!;
     
-    console.log("Sending booking confirmation email to:", booking.email, "for user:", auth.userId);
+    const resendKey = Deno.env.get("RESEND_API_KEY");
+    if (!resendKey) {
+      return serviceUnavailableResponse("EMAIL_CONFIRMATION");
+    }
+    
+    const resend = new Resend(resendKey);
 
     const bookingTypeLabel = booking.bookingType === "hotel" ? "Hotel" : 
                              booking.bookingType === "flight" ? "Flight" : "Cab";
 
-    const bookingDetails = booking.bookingType === "hotel" 
+    const bookingDetails = booking.bookingType === "hotel"
       ? `<p><strong>Hotel:</strong> ${booking.hotel}</p>
          <p><strong>Destination:</strong> ${booking.destination}</p>
          <p><strong>Check-in Date:</strong> ${booking.date}</p>
@@ -125,20 +128,10 @@ const handler = async (req: Request): Promise<Response> => {
 
     return new Response(JSON.stringify(emailResponse), {
       status: 200,
-      headers: {
-        "Content-Type": "application/json",
-        ...corsHeaders,
-      },
+      headers: { "Content-Type": "application/json", ...corsHeaders },
     });
-  } catch (error: any) {
-    console.error("Error in send-booking-confirmation function:", error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      }
-    );
+  } catch (error) {
+    return internalErrorResponse(error, "EMAIL_CONFIRMATION");
   }
 };
 

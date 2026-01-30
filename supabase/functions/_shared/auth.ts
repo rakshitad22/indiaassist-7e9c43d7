@@ -33,7 +33,6 @@ export async function authenticateRequest(req: Request): Promise<AuthResult | nu
     const { data, error } = await supabase.auth.getUser(token);
     
     if (error || !data.user) {
-      console.error("Auth error:", error?.message);
       return null;
     }
 
@@ -41,8 +40,7 @@ export async function authenticateRequest(req: Request): Promise<AuthResult | nu
       userId: data.user.id,
       email: data.user.email || "",
     };
-  } catch (error) {
-    console.error("Authentication failed:", error);
+  } catch {
     return null;
   }
 }
@@ -64,5 +62,34 @@ export function badRequestResponse(message: string): Response {
   return new Response(
     JSON.stringify({ error: message }),
     { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+  );
+}
+
+/**
+ * Creates a generic internal server error response without leaking details
+ * Logs the actual error server-side for debugging
+ */
+export function internalErrorResponse(error: unknown, context: string): Response {
+  // Log full error details server-side only
+  const errorId = crypto.randomUUID().slice(0, 8);
+  console.error(`[${context}] Error ID: ${errorId}`, error instanceof Error ? error.message : String(error));
+  
+  return new Response(
+    JSON.stringify({ 
+      error: "An error occurred while processing your request. Please try again later.",
+      errorId 
+    }),
+    { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+  );
+}
+
+/**
+ * Creates a service unavailable response for missing configuration
+ */
+export function serviceUnavailableResponse(context: string): Response {
+  console.error(`[${context}] Service not configured`);
+  return new Response(
+    JSON.stringify({ error: "Service temporarily unavailable" }),
+    { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } }
   );
 }

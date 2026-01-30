@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { authenticateRequest, corsHeaders, unauthorizedResponse, badRequestResponse } from "../_shared/auth.ts";
+import { authenticateRequest, corsHeaders, unauthorizedResponse, badRequestResponse, internalErrorResponse, serviceUnavailableResponse } from "../_shared/auth.ts";
 import { validateTranslateRequest } from "../_shared/validation.ts";
 
 serve(async (req) => {
@@ -84,7 +84,9 @@ serve(async (req) => {
     };
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
+    if (!LOVABLE_API_KEY) {
+      return serviceUnavailableResponse("TRANSLATE");
+    }
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -100,9 +102,8 @@ serve(async (req) => {
       }),
     });
 
-
     if (!response.ok) {
-      throw new Error(`AI API error: ${response.status}`);
+      return internalErrorResponse(new Error(`Translation API error: ${response.status}`), "TRANSLATE");
     }
 
     const data = await response.json();
@@ -113,10 +114,6 @@ serve(async (req) => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Translation failed';
-    return new Response(
-      JSON.stringify({ error: errorMessage }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    return internalErrorResponse(error, "TRANSLATE");
   }
 });
